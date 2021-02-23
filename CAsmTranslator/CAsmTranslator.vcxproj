@@ -140,10 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Table.cpp" />
+    <ClCompile Include="Table_Identifiers.cpp" />
+    <ClCompile Include="Table_Keywords.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Table.h" />
+    <ClInclude Include="Table_Identifiers.h" />
+    <ClInclude Include="Table_Keywords.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,9 @@
-#include "Table.h"
+#include "Table_Keywords.h"
+
+Record_Keywords::Record_Keywords_str(char* keyword)
+{
+	this->keyword = keyword;
+}
 
 Table_Keywords::Table_Keywords()
 {
@@ -7,7 +12,7 @@ Table_Keywords::Table_Keywords()
 
 void Table_Keywords::add(Record_Keywords* record)
 {
-
+	records.push_back(record);
 }
 
 Record_Keywords* Table_Keywords::get(int id)
