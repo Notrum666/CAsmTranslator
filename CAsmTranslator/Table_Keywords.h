@@ -5,6 +5,7 @@ struct Record_Keywords_str
 {
 public:
 	char* keyword;
+	Record_Keywords_str(char* keyword);
 } typedef Record_Keywords;
 
 class Table_Keywords
