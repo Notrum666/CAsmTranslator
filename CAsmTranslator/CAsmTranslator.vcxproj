@@ -141,11 +141,9 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Table.cpp" />
-    <ClCompile Include="Table_Constants.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Table.h" />
-    <ClInclude Include="Table_Constants.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
