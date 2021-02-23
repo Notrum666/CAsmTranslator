@@ -1,8 +1,10 @@
 #include "Table_Identifiers.h"
 
-Record_Identifiers::Record_Identifiers_str(char* name)
+Record_Identifiers::Record_Identifiers(const char* name, void* value, Type* type)
 {
 	this->name = name;
+	this->value = value;
+	this->type = type;
 	initialized = false;
 }
 
@@ -11,9 +13,10 @@ Table_Identifiers::Table_Identifiers()
 	records = std::vector<Record_Identifiers*>();
 }
 
-void Table_Identifiers::add(Record_Identifiers* record)
+int Table_Identifiers::add(Record_Identifiers* record)
 {
 	records.push_back(record);
+	return records.size() - 1;
 }
 
 Record_Identifiers* Table_Identifiers::get(int id)

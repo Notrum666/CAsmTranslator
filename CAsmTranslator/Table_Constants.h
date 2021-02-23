@@ -1,24 +1,25 @@
-#include <vector>
 #pragma once
+#include <vector>
+#include "Types.h"
 
-template<typename T>
 struct Record_Constants
 {
 public:
-	 T value;
+	void* value;
+	Type type;
+	Record_Constants(void* value, Type type);
 };
 
-template<typename T>
 class Table_Constants
 {
 private:
-	std::vector<Record_Constants<T>*> records;
+	std::vector<Record_Constants*> records;
 public:
 	Table_Constants();
-	void add(Record_Constants<T>* record);
-	Record_Constants<T>* get(int id);
-	Record_Constants<T>* getByValue(T value);
-	int getId(Record_Constants<T>* record);
-	int getIdByValue(T value);
+	int add(Record_Constants* record);
+	Record_Constants* get(int id);
+	Record_Constants* getByValue(void* value);
+	int getId(Record_Constants* record);
+	int getIdByValue(void* value);
 };
 

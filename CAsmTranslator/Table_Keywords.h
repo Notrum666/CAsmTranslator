@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
 
-struct Record_Keywords_str
+struct Record_Keywords
 {
 public:
-	char* keyword;
-	Record_Keywords_str(char* keyword);
-} typedef Record_Keywords;
+	const char* keyword;
+	Record_Keywords(const char* keyword);
+};
 
 class Table_Keywords
 {
@@ -14,7 +14,7 @@ private:
 	std::vector<Record_Keywords*> records;
 public:
 	Table_Keywords();
-	void add(Record_Keywords* record);
+	int add(Record_Keywords* record);
 	Record_Keywords* get(int id);
 	Record_Keywords* getByKeyword(char* keyword);
 	int getId(Record_Keywords* record);

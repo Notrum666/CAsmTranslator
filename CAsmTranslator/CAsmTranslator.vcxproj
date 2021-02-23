@@ -143,11 +143,19 @@
     <ClCompile Include="Table_Constants.cpp" />
     <ClCompile Include="Table_Identifiers.cpp" />
     <ClCompile Include="Table_Keywords.cpp" />
+    <ClCompile Include="Table_TerminalSymbols.cpp" />
+    <ClCompile Include="Token.cpp" />
+    <ClCompile Include="Translator.cpp" />
+    <ClCompile Include="Types.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Table_Constants.h" />
     <ClInclude Include="Table_Identifiers.h" />
     <ClInclude Include="Table_Keywords.h" />
+    <ClInclude Include="Table_TerminalSymbols.h" />
+    <ClInclude Include="Token.h" />
+    <ClInclude Include="Translator.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

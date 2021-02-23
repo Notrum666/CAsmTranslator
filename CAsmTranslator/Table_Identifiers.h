@@ -1,13 +1,16 @@
 #pragma once
 #include <vector>
+#include "Types.h"
 
-struct Record_Identifiers_str
+struct Record_Identifiers
 {
 public:
-	char* name;
+	const char* name;
+	Type* type;
+	void* value;
 	bool initialized;
-	Record_Identifiers_str(char* name);
-} typedef Record_Identifiers;
+	Record_Identifiers(const char* name, void* value, Type* type);
+};
 
 class Table_Identifiers
 {
@@ -15,7 +18,7 @@ private:
 	std::vector<Record_Identifiers*> records;
 public:
 	Table_Identifiers();
-	void add(Record_Identifiers* record);
+	int add(Record_Identifiers* record);
 	Record_Identifiers* get(int id);
 	Record_Identifiers* getByName(char* keyword);
 	int getId(Record_Identifiers* record);

@@ -1,75 +1,50 @@
 #include "Table_Constants.h"
 #include <vector>
 
-template<typename T>
-Table_Constants<T>::Table_Constants()
+Record_Constants::Record_Constants(void* value, Type type)
 {
-	records = std::vector<Table_Constants<T>*>();
+	this->value = value;
+	this->type = type;
 }
 
-template<typename T>
-void Table_Constants<T>::add(Record_Constants<T>* record)
+Table_Constants::Table_Constants()
+{
+	records = std::vector<Record_Constants*>();
+}
+
+int Table_Constants::add(Record_Constants* record)
 {
 	records.push_back(record);
+	return records.size() - 1;
 }
 
-template<typename T>
-Record_Constants<T>* Table_Constants<T>::get(int id)
+Record_Constants* Table_Constants::get(int id)
 {
 	return records[id];
 }
 
-template<typename T>
-Record_Constants<T>* Table_Constants<T>::getByValue(T value)
+Record_Constants* Table_Constants::getByValue(void* value)
 {
-	if (std::is_same<T, char*>::value)
-	{
-		for (auto record : records)
-			if (!std::strcmp(record->value, value))
-				return record;
-	}
-	else
-	{
-		for (auto record : records)
-			if (record->value == value)
-				return record;
-	}
+	for (auto record : records)
+		if (equal(record->value, value, record->type))
+			return record;
 	return nullptr;
 }
 
-template<typename T>
-int Table_Constants<T>::getId(Record_Constants<T>* record)
+int Table_Constants::getId(Record_Constants* record)
 {
 	int size = records.size();
-	if (std::is_same<T, char*>::value)
-	{
-		for (int i = 0; i < size; i++)
-			if (!std::strcmp(records[i]->value, record))
-				return i;
-	}
-	else
-	{
-		for (int i = 0; i < size; i++)
-			if (records[i]->value == record)
-				return i;
-	}	
+	for (int i = 0; i < size; i++)
+		if (records[i] == record)
+			return i;
 	return -1;
 }
 
-template<typename T>
-int Table_Constants<T>::getIdByValue(T value)
+int Table_Constants::getIdByValue(void* value)
 {
-	if (std::is_same<T, char*>::value)
-	{
-		for (int i = 0; i < size; i++)
-			if (!std::strcmp(records[i]->value, value))
-				return i;
-	}
-	else
-	{
-		for (int i = 0; i < size; i++)
-			if (records[i]->value == value)
-				return i;
-	}
+	int size = records.size();
+	for (int i = 0; i < size; i++)
+		if (equal(records[i]->value, value, records[i]->type))
+			return i;
 	return -1;
 }
