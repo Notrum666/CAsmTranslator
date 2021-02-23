@@ -24,12 +24,18 @@
     <ClCompile Include="Table_Identifiers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Table_Constants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Table_Keywords.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Table_Identifiers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Table_Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
