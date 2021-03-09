@@ -40,34 +40,59 @@ bool Translator::translateFile(const char* pathFrom, const char* pathTo)
 	int pos = 0;
 	int cur = 0;
 
-	while ((cur = std::fgetc(file_in)) != EOF)
+	int statesCount = 4;
+
+	const char** stateTable = (char**)std::malloc(statesCount * sizeof(char*));
+	stateTable[0] = "\0\1\2\3";
+	stateTable[1] = "\0\0\0\0";
+	stateTable[2] = "\0\0\0\0";
+	stateTable[3] = "\0\0\0\0";
+
+	State state = State::Start;
+	while (!feof(file_in))
 	{
-		short symbolId = terminalSymbols->getIdBySymbol(cur);
-		if (symbolId == -1)
-			buffer[pos++] = cur;
-		else
+		switch (state)
 		{
-			if (pos > 0)
-			{
-				Token* token = generateToken(buffer);
-				if (token == nullptr)
-					return false;
-				tokens.push_back(token);
-				printf_s("(%d|%d) ", token->table_id, token->record_id);
-				while (pos > 0)
-					buffer[--pos] = 0;
-			}
-			if (!terminalSymbols->get(symbolId)->skip)
-			{
-				Token* token = new Token(1, symbolId);
-				tokens.push_back(token);
-				printf_s("(%d|%d) ", token->table_id, token->record_id);
-			}
-			else
-				if (cur == '\n')
-					printf_s("\n");
+		case State::Start:
+
+			break;
+		case State::Digit:
+			break;
+		case State::Letter:
+			break;
+		case State::Slash:
+			break;
 		}
 	}
+
+	//while ((cur = std::fgetc(file_in)) != EOF)
+	//{
+	//	short symbolId = terminalSymbols->getIdBySymbol(cur);
+	//	if (symbolId == -1)
+	//		buffer[pos++] = cur;
+	//	else
+	//	{
+	//		if (pos > 0)
+	//		{
+	//			Token* token = generateToken(buffer);
+	//			if (token == nullptr)
+	//				return false;
+	//			tokens.push_back(token);
+	//			printf_s("(%d|%d) ", token->table_id, token->record_id);
+	//			while (pos > 0)
+	//				buffer[--pos] = 0;
+	//		}
+	//		if (!terminalSymbols->get(symbolId)->skip)
+	//		{
+	//			Token* token = new Token(1, symbolId);
+	//			tokens.push_back(token);
+	//			printf_s("(%d|%d) ", token->table_id, token->record_id);
+	//		}
+	//		else
+	//			if (cur == '\n')
+	//				printf_s("\n");
+	//	}
+	//}
 
 	return true;
 }
