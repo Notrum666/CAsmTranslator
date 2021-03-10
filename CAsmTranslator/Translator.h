@@ -6,6 +6,14 @@
 #include "Table_Constants.h"
 #include "Token.h"
 
+enum State
+{
+	Start = 0,
+	Digit = 1,
+	Letter = 2,
+	Slash = 3
+};
+
 class Translator
 {
 private:
