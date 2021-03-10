@@ -23,4 +23,5 @@ public:
 	Record_Identifiers* getByName(char* keyword);
 	int getId(Record_Identifiers* record);
 	int getIdByName(char* keyword);
+	void print();
 };

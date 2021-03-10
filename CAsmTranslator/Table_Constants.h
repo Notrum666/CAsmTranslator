@@ -21,5 +21,6 @@ public:
 	Record_Constants* getByValue(void* value);
 	int getId(Record_Constants* record);
 	int getIdByValue(void* value);
+	void print();
 };
 

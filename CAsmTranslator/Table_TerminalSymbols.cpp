@@ -47,3 +47,10 @@ int Table_TerminalSymbols::getIdBySymbol(char symbol)
 			return i;
 	return -1;
 }
+
+void Table_TerminalSymbols::print()
+{
+	printf_s("Terminal symbols table:\n");
+	for (auto record : records)
+		printf_s("%c %d\n", (char*)record->symbol, record->skip);
+}

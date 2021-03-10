@@ -26,6 +26,43 @@ Translator::Translator()
 	terminalSymbols->add(new Record_TerminalSymbols('(', false));
 	terminalSymbols->add(new Record_TerminalSymbols(')', false));
 	terminalSymbols->add(new Record_TerminalSymbols('=', false));
+
+	identifiers->add(new Record_Identifiers((char*)"test", (void*)5, (Type*)Type::type_int));
+	identifiers->add(new Record_Identifiers((char*)"test2", (void*)6, (Type*)Type::type_int));
+	//
+	//Record_Identifiers* r = new Record_Identifiers((char*)"test", (void*)10, (Type*)Type::type_int);
+	//int id = identifiers->getIdByName((char*)r->name);
+	//if (id != -1)
+	//	printf_s("Record with this name is already exists\n");
+	//identifiers->print();
+	//printf_s("id of \"test500\" : %d\n", identifiers->getIdByName((char*)"test500"));
+	//int* value = (int*)std::malloc(sizeof(int));
+	//*value = 5;
+	//constants->add(new Record_Constants((void*)((int*)value), Type::type_int));
+	//value = (int*)std::malloc(sizeof(int));
+	//*value = 6;
+	//constants->add(new Record_Constants((void*)((int*)value), Type::type_int));
+	//constants->add(new Record_Constants());
+
+	//Record_Identifiers* r = new Record_Identifiers((char*)"test", (void*)10, (Type*)Type::type_int);
+	//value = (int*)std::malloc(sizeof(int));
+	//*value = 500;
+	//int id = constants->getIdByValue((void*)value);
+	//if (id != -1)
+	//	printf_s("Record with this name is already exists\n");
+	//constants->print();
+	//printf_s("id of \"500\" : %d\n", constants->getIdByValue((void*)value));
+
+	//keywords->print();
+	//char* wordToSearch = (char*)"help";
+	//int id = keywords->getIdByKeyword(wordToSearch);
+	//printf_s("id of %s : %d", wordToSearch, id);
+
+	//terminalSymbols->print();
+	//char symbolToSearch = '[';
+	//int id = terminalSymbols->getIdBySymbol(symbolToSearch);
+	//printf_s("id of \"[\" : %d", id);
+	Record_Identifiers* record = identifiers->get(1);
 }
 
 bool Translator::translateFile(const char* pathFrom, const char* pathTo)

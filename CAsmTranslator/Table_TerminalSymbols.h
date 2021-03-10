@@ -20,4 +20,5 @@ public:
 	Record_TerminalSymbols* getBySymbol(char symbol);
 	int getId(Record_TerminalSymbols* record);
 	int getIdBySymbol(char symbol);
+	void print();
 };

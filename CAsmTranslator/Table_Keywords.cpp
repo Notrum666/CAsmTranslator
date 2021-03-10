@@ -46,3 +46,10 @@ int Table_Keywords::getIdByKeyword(char* keyword)
 			return i;
 	return -1;
 }
+
+void Table_Keywords::print()
+{
+	printf_s("Keywords table:\n");
+	for (auto record : records)
+		printf_s("%s\n", record->keyword);
+}

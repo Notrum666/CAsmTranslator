@@ -19,4 +19,5 @@ public:
 	Record_Keywords* getByKeyword(char* keyword);
 	int getId(Record_Keywords* record);
 	int getIdByKeyword(char* keyword);
+	void print();
 };

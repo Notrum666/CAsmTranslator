@@ -49,3 +49,10 @@ int Table_Identifiers::getIdByName(char* name)
 			return i;
 	return -1;
 }
+
+void Table_Identifiers::print()
+{
+	printf_s("Identifiers table:\n");
+	for (auto record : records)
+		printf_s("%s %s %d %d\n", record->name, "int", record->value, record->initialized);
+}

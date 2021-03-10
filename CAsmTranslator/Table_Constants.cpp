@@ -48,3 +48,10 @@ int Table_Constants::getIdByValue(void* value)
 			return i;
 	return -1;
 }
+
+void Table_Constants::print()
+{
+	printf_s("Constants table:\n");
+	for (auto record : records)
+		printf_s("%d %s\n", *((int*)record->value), "int");
+}
