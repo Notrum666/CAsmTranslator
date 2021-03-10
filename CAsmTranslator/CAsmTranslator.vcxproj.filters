@@ -39,6 +39,9 @@
     <ClCompile Include="Table_TerminalSymbols.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StateGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Table_Keywords.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Table_TerminalSymbols.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StateGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

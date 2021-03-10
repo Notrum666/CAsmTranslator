@@ -3,7 +3,7 @@
 
 int main()
 {
-	Translator translator = Translator();
+	Translator::Init();
 	//bool success = translator.translateFile("code.cpp", "code.asm");
 	//printf_s("\n%d", success);
 	scanf_s("%*c");

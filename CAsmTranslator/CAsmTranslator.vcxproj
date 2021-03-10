@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="StateGraph.cpp" />
     <ClCompile Include="Table_Constants.cpp" />
     <ClCompile Include="Table_Identifiers.cpp" />
     <ClCompile Include="Table_Keywords.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="Types.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="StateGraph.h" />
     <ClInclude Include="Table_Constants.h" />
     <ClInclude Include="Table_Identifiers.h" />
     <ClInclude Include="Table_Keywords.h" />

@@ -1,6 +1,6 @@
 #include "Translator.h"
 
-Translator::Translator()
+void Translator::Init()
 {
 	keywords = new Table_Keywords();
 	terminalSymbols = new Table_TerminalSymbols();
@@ -27,8 +27,8 @@ Translator::Translator()
 	terminalSymbols->add(new Record_TerminalSymbols(')', false));
 	terminalSymbols->add(new Record_TerminalSymbols('=', false));
 
-	identifiers->add(new Record_Identifiers((char*)"test", (void*)5, (Type*)Type::type_int));
-	identifiers->add(new Record_Identifiers((char*)"test2", (void*)6, (Type*)Type::type_int));
+	//identifiers->add(new Record_Identifiers((char*)"test", (void*)5, (Type*)Type::type_int));
+	//identifiers->add(new Record_Identifiers((char*)"test2", (void*)6, (Type*)Type::type_int));
 	//
 	//Record_Identifiers* r = new Record_Identifiers((char*)"test", (void*)10, (Type*)Type::type_int);
 	//int id = identifiers->getIdByName((char*)r->name);
@@ -65,40 +65,67 @@ Translator::Translator()
 	Record_Identifiers* record = identifiers->get(1);
 }
 
-bool Translator::translateFile(const char* pathFrom, const char* pathTo)
+bool Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 {
 	FILE* file_in;
 	if (fopen_s(&file_in, pathFrom, "r"))
 		return false;
 
+	const int alphabetsCount = 4;
+	const char** alphabets = (const char**)std::malloc(alphabetsCount * sizeof(char*));
+	alphabets[0] = " \n\t;(){}";
+	alphabets[1] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXYZ_";
+	alphabets[2] = "+-=!";
+	alphabets[3] = "0123456789";
+
 	std::vector<Token*> tokens = std::vector<Token*>();
+
+	int statesCount = 4;
+
+	const char** stateTable = (const char**)std::malloc(statesCount * sizeof(char*));
+	stateTable[0] = "\0\1\2\3";
+	stateTable[1] = "\0\1\2\1";
+	stateTable[2] = "\0\1\255\3";
+	stateTable[3] = "\0\255\2\3";
 
 	char* buffer = (char*)std::calloc(MAX_IDENTIFIER_LENGTH, sizeof(char));
 	int pos = 0;
 	int cur = 0;
 
-	int statesCount = 4;
-
-	const char** stateTable = (char**)std::malloc(statesCount * sizeof(char*));
-	stateTable[0] = "\0\1\2\3";
-	stateTable[1] = "\0\0\0\0";
-	stateTable[2] = "\0\0\0\0";
-	stateTable[3] = "\0\0\0\0";
-
-	State state = State::Start;
-	while (!feof(file_in))
+	State state = State::Delim;
+	while ((cur = fgetc(file_in)) != -1)
 	{
-		switch (state)
+		for (int i = 0; i < alphabetsCount; i++)
 		{
-		case State::Start:
-
-			break;
-		case State::Digit:
-			break;
-		case State::Letter:
-			break;
-		case State::Slash:
-			break;
+			if (strchr(alphabets[state], cur) != nullptr)
+			{
+				if (stateTable[state][i] == 255)
+					return false;
+				
+				if (stateTable[state][i] == State::Delim)
+				{
+					if (pos != 0)
+						while (pos > 0)
+							buffer[--pos] = 0;
+				}
+				else
+				{
+					switch (state)
+					{
+					case State::Letter:
+						break;
+					case State::Operator:
+						break;
+					case State::Number:
+						int value = atoi(buffer);
+						int id;
+						if ((id = constants->getIdByValue(&value)) != -1)
+							tokens.push_back(new Token(3, id));
+						break;
+					}
+				}
+				state = (State)stateTable[state][i];
+			}
 		}
 	}
 
