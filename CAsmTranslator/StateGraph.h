@@ -1,21 +1,24 @@
 #pragma once
 #include <vector>
 #include "Translator.h"
+#include "Token.h"
+
+class StateNode;
 
 class Path
 {
 public:
-	const char* alphabet;
+	std::regex* regex;
 	StateNode* destination;
-	Path(const char* alphabet);
+	Path(StateNode* destination, std::regex* regex);
 };
 
 class StateNode
 {
 public:
-	Token** getResult;
+	bool (*getResult)(const char*, std::vector<Token*>*);
 	std::vector<Path*> paths;
-	StateNode(Token** getResult);
+	StateNode(bool (*getResult)(const char*, std::vector<Token*>*));
 };
 
 class StateGraph

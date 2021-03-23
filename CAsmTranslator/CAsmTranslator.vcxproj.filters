@@ -36,10 +36,10 @@
     <ClCompile Include="Token.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Table_TerminalSymbols.cpp">
+    <ClCompile Include="StateGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StateGraph.cpp">
+    <ClCompile Include="Table_Delimeters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,10 +62,10 @@
     <ClInclude Include="Token.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Table_TerminalSymbols.h">
+    <ClInclude Include="StateGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StateGraph.h">
+    <ClInclude Include="Table_Delimeters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

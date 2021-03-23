@@ -1,28 +1,28 @@
-#include "Table_TerminalSymbols.h"
+#include "Table_Delimeters.h"
 
-Record_TerminalSymbols::Record_TerminalSymbols(char symbol, bool skip)
+Record_Delimeters::Record_Delimeters(char symbol, bool skip)
 {
 	this->symbol = symbol;
 	this->skip = skip;
 }
 
-Table_TerminalSymbols::Table_TerminalSymbols()
+Table_Delimeters::Table_Delimeters()
 {
-	records = std::vector<Record_TerminalSymbols*>();
+	records = std::vector<Record_Delimeters*>();
 }
 
-int Table_TerminalSymbols::add(Record_TerminalSymbols* record)
+int Table_Delimeters::add(Record_Delimeters* record)
 {
 	records.push_back(record);
 	return records.size() - 1;
 }
 
-Record_TerminalSymbols* Table_TerminalSymbols::get(int id)
+Record_Delimeters* Table_Delimeters::get(int id)
 {
 	return records[id];
 }
 
-Record_TerminalSymbols* Table_TerminalSymbols::getBySymbol(char symbol)
+Record_Delimeters* Table_Delimeters::getBySymbol(const char symbol)
 {
 	for (auto record : records)
 		if (record->symbol == symbol)
@@ -30,7 +30,7 @@ Record_TerminalSymbols* Table_TerminalSymbols::getBySymbol(char symbol)
 	return nullptr;
 }
 
-int Table_TerminalSymbols::getId(Record_TerminalSymbols* record)
+int Table_Delimeters::getId(Record_Delimeters* record)
 {
 	int size = records.size();
 	for (int i = 0; i < size; i++)
@@ -39,7 +39,7 @@ int Table_TerminalSymbols::getId(Record_TerminalSymbols* record)
 	return -1;
 }
 
-int Table_TerminalSymbols::getIdBySymbol(char symbol)
+int Table_Delimeters::getIdBySymbol(const char symbol)
 {
 	int size = records.size();
 	for (int i = 0; i < size; i++)
@@ -48,7 +48,7 @@ int Table_TerminalSymbols::getIdBySymbol(char symbol)
 	return -1;
 }
 
-void Table_TerminalSymbols::print()
+void Table_Delimeters::print()
 {
 	printf_s("Terminal symbols table:\n");
 	for (auto record : records)

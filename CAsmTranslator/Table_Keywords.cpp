@@ -21,7 +21,7 @@ Record_Keywords* Table_Keywords::get(int id)
 	return records[id];
 }
 
-Record_Keywords* Table_Keywords::getByKeyword(char* keyword)
+Record_Keywords* Table_Keywords::getByKeyword(const char* keyword)
 {
 	for (auto record : records)
 		if (!std::strcmp(record->keyword, keyword))
@@ -38,7 +38,7 @@ int Table_Keywords::getId(Record_Keywords* record)
 	return -1;
 }
 
-int Table_Keywords::getIdByKeyword(char* keyword)
+int Table_Keywords::getIdByKeyword(const char* keyword)
 {
 	int size = records.size();
 	for (int i = 0; i < size; i++)

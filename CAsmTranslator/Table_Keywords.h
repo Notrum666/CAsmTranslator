@@ -16,8 +16,8 @@ public:
 	Table_Keywords();
 	int add(Record_Keywords* record);
 	Record_Keywords* get(int id);
-	Record_Keywords* getByKeyword(char* keyword);
+	Record_Keywords* getByKeyword(const char* keyword);
 	int getId(Record_Keywords* record);
-	int getIdByKeyword(char* keyword);
+	int getIdByKeyword(const char* keyword);
 	void print();
 };

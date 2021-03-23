@@ -1,6 +1,6 @@
 #include "Table_Identifiers.h"
 
-Record_Identifiers::Record_Identifiers(const char* name, void* value, Type* type)
+Record_Identifiers::Record_Identifiers(const char* name, void* value, Type type)
 {
 	this->name = name;
 	this->value = value;
@@ -24,7 +24,7 @@ Record_Identifiers* Table_Identifiers::get(int id)
 	return records[id];
 }
 
-Record_Identifiers* Table_Identifiers::getByName(char* name)
+Record_Identifiers* Table_Identifiers::getByName(const char* name)
 {
 	for (auto record : records)
 		if (!std::strcmp(record->name, name))
@@ -41,7 +41,7 @@ int Table_Identifiers::getId(Record_Identifiers* record)
 	return -1;
 }
 
-int Table_Identifiers::getIdByName(char* name)
+int Table_Identifiers::getIdByName(const char* name)
 {
 	int size = records.size();
 	for (int i = 0; i < size; i++)

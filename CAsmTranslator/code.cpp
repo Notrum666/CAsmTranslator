@@ -1,9 +1,13 @@
 int main()
 {
-	int a;
-	a = 5;
+	int abc;
+	abc = 5;
+/* qweqweqwe 
+qweasdas
+*/
 	while (a > 5)
 	{
-		a = 3;
+		abc = 3;
+// qweasfsdgsagb
 	}
 }
