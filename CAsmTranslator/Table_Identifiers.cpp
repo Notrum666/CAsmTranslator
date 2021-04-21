@@ -53,6 +53,6 @@ int Table_Identifiers::getIdByName(const char* name)
 void Table_Identifiers::print()
 {
 	printf_s("Identifiers table:\n");
-	for (auto record : records)
-		printf_s("%s %s %d %d\n", record->name, "int", record->value, record->initialized);
+	for (int i = 0; i < records.size(); i++)
+		printf_s("%d. %s %s %d %d\n", i, records[i]->name, "int", records[i]->value, records[i]->initialized);
 }

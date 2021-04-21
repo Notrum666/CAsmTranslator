@@ -1,4 +1,5 @@
 #include "StateGraph.h"
+#include "Error.h"
 
 Path::Path(StateNode* destination, std::regex* regex)
 {
@@ -6,13 +7,13 @@ Path::Path(StateNode* destination, std::regex* regex)
 	this->regex = regex;
 }
 
-StateNode::StateNode(bool (*getResult)(const char*, std::vector<Token*>*))
+StateNode::StateNode(Error* (*getResult)(const char*, std::vector<Token*>*))
 {
 	this->paths = std::vector<Path*>();
 	this->getResult = getResult;
 }
 
-bool getResult_D(const char* buffer, std::vector<Token*>* tokens)
+Error* getResult_D(const char* buffer, std::vector<Token*>* tokens)
 {
 	int id;
 	while (*buffer != '\0')
@@ -22,42 +23,44 @@ bool getResult_D(const char* buffer, std::vector<Token*>* tokens)
 			if (!Translator::delimeters->get(id)->skip)
 				tokens->push_back(new Token(1, id));
 		}
-		else
-			return false;
+		else return new Error(nullptr, 0, 0, "undefined delimeter");
 		buffer++;
 	}
-	return true;
+	return nullptr;
 }
-bool getResult_L(const char* buffer, std::vector<Token*>* tokens)
+
+Error* getResult_L(const char* buffer, std::vector<Token*>* tokens)
 {
 	int id;
 	if ((id = Translator::keywords->getIdByKeyword(buffer)) != -1)
 	{
 		tokens->push_back(new Token(0, id));
-		return true;
+		return nullptr;
 	}
 	if ((id = Translator::identifiers->getIdByName(buffer)) != -1)
 	{
 		tokens->push_back(new Token(2, id));
-		return true;
+		return nullptr;
 	}
 	int len = (std::strlen(buffer) + 1);
 	char* name = (char*)std::malloc(len * sizeof(char));
 	strcpy_s(name, len, buffer);
 	tokens->push_back(new Token(2, Translator::identifiers->add(new Record_Identifiers(name, nullptr, Type::type_int))));
-	return true;
+	return nullptr;
 }
-bool getResult_O(const char* buffer, std::vector<Token*>* tokens)
+
+Error* getResult_O(const char* buffer, std::vector<Token*>* tokens)
 {
 	int id;
 	if ((id = Translator::keywords->getIdByKeyword(buffer)) != -1)
 	{
 		tokens->push_back(new Token(0, id));
-		return true;
+		return nullptr;
 	}
-	return false;
+	return new Error(nullptr, 0, 0, "undefined keyword");
 }
-bool getResult_N(const char* buffer, std::vector<Token*>* tokens)
+
+Error* getResult_N(const char* buffer, std::vector<Token*>* tokens)
 {
 	int id;
 	int* value = (int*)std::malloc(sizeof(int));
@@ -65,11 +68,12 @@ bool getResult_N(const char* buffer, std::vector<Token*>* tokens)
 	if ((id = Translator::constants->getIdByValue(value)) == -1)
 		id = Translator::constants->add(new Record_Constants(value, Type::type_int));
 	tokens->push_back(new Token(3, id));
-	return true;
+	return nullptr;
 }
-bool getResult_DoNothing(const char* buffer, std::vector<Token*>* tokens)
+
+Error* getResult_DoNothing(const char* buffer, std::vector<Token*>* tokens)
 {
-	return true;
+	return nullptr;
 }
 
 StateGraph::StateGraph()

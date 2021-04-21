@@ -51,6 +51,7 @@ int Table_Delimeters::getIdBySymbol(const char symbol)
 void Table_Delimeters::print()
 {
 	printf_s("Terminal symbols table:\n");
-	for (auto record : records)
-		printf_s("%c %d\n", (char*)record->symbol, record->skip);
+	int i;
+	for (i = 0; i < records.size(); i++)
+		printf_s("%d. %c %d\n", i, (char*)records[i]->symbol, records[i]->skip);
 }

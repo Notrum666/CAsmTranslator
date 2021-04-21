@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Error.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StateGraph.cpp" />
     <ClCompile Include="Table_Constants.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="Types.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Error.h" />
     <ClInclude Include="StateGraph.h" />
     <ClInclude Include="Table_Constants.h" />
     <ClInclude Include="Table_Identifiers.h" />

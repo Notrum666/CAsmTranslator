@@ -1,4 +1,5 @@
 #include "Translator.h"
+#include "Error.h"
 
 Table_Keywords* Translator::keywords = new Table_Keywords();
 Table_Delimeters* Translator::delimeters = new Table_Delimeters();
@@ -11,9 +12,14 @@ void Translator::Init()
 	keywords->add(new Record_Keywords("while"));
 	keywords->add(new Record_Keywords("do"));
 	keywords->add(new Record_Keywords("="));
+	keywords->add(new Record_Keywords("+"));
+	keywords->add(new Record_Keywords("-"));
+	keywords->add(new Record_Keywords("!"));
 	keywords->add(new Record_Keywords("<"));
 	keywords->add(new Record_Keywords(">"));
 	keywords->add(new Record_Keywords("=="));
+	keywords->add(new Record_Keywords("+="));
+	keywords->add(new Record_Keywords("-="));
 	keywords->add(new Record_Keywords("<="));
 	keywords->add(new Record_Keywords(">="));
 	keywords->add(new Record_Keywords("!="));
@@ -28,11 +34,13 @@ void Translator::Init()
 	delimeters->add(new Record_Delimeters(')', false));
 }
 
-bool Translator::TranslateFile(const char* pathFrom, const char* pathTo)
+Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 {
-	FILE* file_in;
+	FILE* file_in, *file_out;
 	if (fopen_s(&file_in, pathFrom, "r"))
-		return false;
+		return new Error(pathFrom, 0, 0, "Cant open file");
+	if(fopen_s(&file_out, pathTo, "w"))
+		return new Error(pathTo, 0, 0, "Cant open file");
 
 	std::vector<Token*> tokens = std::vector<Token*>();
 
@@ -42,9 +50,18 @@ bool Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 	char* curChar = (char*)std::calloc(2, sizeof(char));
 
 	StateGraph graph = StateGraph();
+	Error* err;
 	bool foundPath;
+	int curColumn = 1, curRow = 1;
 	while ((cur = fgetc(file_in)) != -1)
 	{
+		curColumn++;
+		if (cur == '\n')
+		{
+			curRow++;
+			curColumn = 0;
+		}
+
 		*curChar = cur;
 		foundPath = false;
 		for (auto path : graph.curNode->paths)
@@ -54,8 +71,13 @@ bool Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 				foundPath = true;
 				if (path->destination != graph.curNode)
 				{
-					if (!graph.curNode->getResult(buffer, &tokens))
-						return false;
+					if (err = graph.curNode->getResult(buffer, &tokens))
+					{
+						err->file = pathFrom;
+						err->row = curRow;
+						err->column = curColumn;
+						return err;
+					}
 					while (pos > 0)
 						buffer[--pos] = 0;
 					graph.curNode = path->destination;
@@ -65,10 +87,16 @@ bool Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 			}
 		}
 		if (!foundPath)
-			return false;
+			return new Error(pathFrom, curRow, curColumn, "undefined symbol");
 	}
-	if (!graph.curNode->getResult(buffer, &tokens))
-		return false;
+
+	if (err = graph.curNode->getResult(buffer, &tokens))
+	{
+		err->file = pathFrom;
+		err->row = curRow;
+		err->column = curColumn;
+		return err;
+	}
 	while (pos > 0)
 		buffer[--pos] = 0;
 
@@ -77,56 +105,16 @@ bool Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 		if (token->table_id == 1)
 		{
 			if (token->record_id == 1)
-				printf_s("\n");
+				fprintf_s(file_out, "\n");
 			else if (token->record_id == 2)
-				printf_s("\t");
+				fprintf_s(file_out, "\t");
 			else
-				printf_s("(%d,%d)", token->table_id, token->record_id);
+				fprintf_s(file_out, "(%d,%d)", token->table_id, token->record_id);
 		}
 		else
-			printf_s("(%d,%d)", token->table_id, token->record_id);
+			fprintf_s(file_out, "(%d,%d)", token->table_id, token->record_id);
 	}
-
-	return true;
+	fclose(file_in);
+	fclose(file_out);
+	return nullptr;
 }
-
-//Token* Translator::generateToken(char* text)
-//{
-//	int id;
-//	id = keywords->getIdByKeyword(text);
-//	if (id != -1)
-//		return new Token(0, id);
-//	if (text[0] == '-' || text[0] >= '0' && text[0] <= '9')
-//	{
-//		char* ptr = text;
-//		while (*(++ptr) != '\0')
-//			if (*ptr < '0' || *ptr > '9')
-//				return nullptr;
-//		int* value = (int*)std::malloc(sizeof(int));
-//		*value = std::atoi(text);
-//		id = constants->getIdByValue((void*)value);
-//		if (id == -1)
-//			return new Token(3, constants->add(new Record_Constants((void*)value, Type::type_int)));
-//		else
-//			return new Token(3, id);
-//	}
-//	if (text[0] >= 'a' && text[0] <= 'z' || text[0] >= 'A' && text[0] <= 'Z' || text[0] == '_')
-//	{
-//		char* ptr = text;
-//		while (*(++ptr) != '\0')
-//			if (!(text[0] >= 'a' && text[0] <= 'z' ||
-//				text[0] >= 'A' && text[0] <= 'Z' ||
-//				text[0] >= '0' && text[0] <= '9' ||
-//				text[0] == '_'))
-//				return nullptr;
-//		size_t size = std::strlen(text) + 1;
-//		char* name = new char[size];
-//		strcpy_s(name, size, text);
-//		id = identifiers->getIdByName(name);
-//		if (id == -1)
-//			return new Token(2, identifiers->add(new Record_Identifiers(name, nullptr, nullptr)));
-//		else
-//			return new Token(2, id);
-//	}
-//	return nullptr;
-//}

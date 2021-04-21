@@ -7,6 +7,7 @@
 #include "Table_Delimeters.h"
 #include "Table_Identifiers.h"
 #include "Table_Constants.h"
+#include "Error.h"
 
 class Translator
 {
@@ -18,6 +19,6 @@ public:
 	static const int MAX_IDENTIFIER_LENGTH = 2049;
 
 	static void Init();
-	static bool TranslateFile(const char* pathFrom, const char* pathTo);
+	static Error* TranslateFile(const char* pathFrom, const char* pathTo);
 };
 

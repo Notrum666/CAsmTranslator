@@ -50,6 +50,6 @@ int Table_Keywords::getIdByKeyword(const char* keyword)
 void Table_Keywords::print()
 {
 	printf_s("Keywords table:\n");
-	for (auto record : records)
-		printf_s("%s\n", record->keyword);
+	for (int i = 0; i < records.size(); i++)
+		printf_s("%d. %s\n", i, records[i]->keyword);
 }

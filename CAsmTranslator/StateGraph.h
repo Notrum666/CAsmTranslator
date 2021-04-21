@@ -2,6 +2,7 @@
 #include <vector>
 #include "Translator.h"
 #include "Token.h"
+#include "Error.h"
 
 class StateNode;
 
@@ -16,9 +17,9 @@ public:
 class StateNode
 {
 public:
-	bool (*getResult)(const char*, std::vector<Token*>*);
+	Error* (*getResult)(const char*, std::vector<Token*>*);
 	std::vector<Path*> paths;
-	StateNode(bool (*getResult)(const char*, std::vector<Token*>*));
+	StateNode(Error* (*getResult)(const char*, std::vector<Token*>*));
 };
 
 class StateGraph

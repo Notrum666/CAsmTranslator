@@ -52,6 +52,7 @@ int Table_Constants::getIdByValue(void* value)
 void Table_Constants::print()
 {
 	printf_s("Constants table:\n");
-	for (auto record : records)
-		printf_s("%d %s\n", *((int*)record->value), "int");
+	int i;
+	for (i = 0; i < records.size(); i++)
+		printf_s("%d. %d %s\n", i, *((int*)records[i]->value), "int");
 }
