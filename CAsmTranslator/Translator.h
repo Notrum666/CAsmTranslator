@@ -7,6 +7,7 @@
 #include "Table_Delimeters.h"
 #include "Table_Identifiers.h"
 #include "Table_Constants.h"
+#include "ParsingTable.h"
 #include "Error.h"
 
 class Translator
@@ -16,6 +17,7 @@ public:
 	static Table_Delimeters* delimeters;
 	static Table_Identifiers* identifiers;
 	static Table_Constants* constants;
+	static ParsingTable* parsingTable;
 	static const int MAX_IDENTIFIER_LENGTH = 2049;
 
 	static void Init();

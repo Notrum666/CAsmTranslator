@@ -5,6 +5,7 @@ Table_Keywords* Translator::keywords = new Table_Keywords();
 Table_Delimeters* Translator::delimeters = new Table_Delimeters();
 Table_Identifiers* Translator::identifiers = new Table_Identifiers();
 Table_Constants* Translator::constants = new Table_Constants();
+ParsingTable* Translator::parsingTable = new ParsingTable();
 
 void Translator::Init()
 {	
@@ -32,6 +33,17 @@ void Translator::Init()
 	delimeters->add(new Record_Delimeters('}', false));
 	delimeters->add(new Record_Delimeters('(', false));
 	delimeters->add(new Record_Delimeters(')', false));
+
+	//parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 0, false, false, false, false));
+
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 1, false, false, false, true)); // Func
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 2, true, false, false, true)); // type
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1) }, 3, true, false, false, true)); // identificator
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 6) }, 4, true, false, false, true)); // (
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 7) }, 5, true, false, false, true)); // )
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 4) }, 6, true, false, false, true)); // {
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(0, 0), Token(2, -1), Token(3, -1), Token(1, 6), Token(0, 1), Token(0, 2) }, 2, true, false, false, true)); // Body
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 5) }, 2, true, false, false, true)); // }
 }
 
 Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
@@ -99,6 +111,8 @@ Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 	}
 	while (pos > 0)
 		buffer[--pos] = 0;
+
+
 
 	for (auto token : tokens)
 	{
