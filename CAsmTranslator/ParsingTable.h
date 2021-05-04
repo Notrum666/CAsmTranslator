@@ -1,6 +1,8 @@
 #pragma once
 #include "Token.h"
 #include <vector>
+#include "ParsingRule.h"
+#include <queue>
 
 struct ParsingTable_Record
 {
@@ -13,9 +15,10 @@ struct ParsingTable_Record
 class ParsingTable
 {
 private:
-	std::vector<ParsingTable_Record*> records;
+	std::vector<ParsingTable_Record*>* records;
 public:
 	ParsingTable();
+	ParsingTable(std::vector<ParsingTable_Record*>* records);
 	void add(ParsingTable_Record* record);
 	ParsingTable_Record* get(int id);
 };
