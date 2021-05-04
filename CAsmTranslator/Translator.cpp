@@ -44,11 +44,11 @@ void Translator::Init()
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 7) }, 5, true, false, false, true)); // 5: )
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 4) }, 6, true, false, false, true)); // 6: {
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(0, 0), Token(2, -1), Token(3, -1), 
-														   Token(1, 6), Token(0, 1), Token(0, 2), Token(1, 5) }, 8, true, true, false, true)); // 7: Body
+														   Token(1, 6), Token(0, 1), Token(0, 2), Token(1, 5) }, 8, false, true, false, true)); // 7: Body
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 5) }, 0, true, false, true, true)); // 8: }
 
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(0, 0), Token(2, -1), Token(3, -1),
-														   Token(1, 6), Token(0, 1), Token(0, 2), Token(1, 5) }, 10, false, false, false, false)); // 9: Body1
+														   Token(1, 6), Token(0, 1), Token(0, 2) }, 10, false, false, false, false)); // 9: Body1
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 5) }, 12, false, false, false, true)); // 10: Body2
 
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(0, 0), Token(2, -1), Token(3, -1),
