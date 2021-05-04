@@ -24,19 +24,19 @@ void Translator::Init()
 	keywords->add(new Record_Keywords(">="));
 	keywords->add(new Record_Keywords("!="));
 
-	delimeters->add(new Record_Delimeters(' ', true));
-	delimeters->add(new Record_Delimeters('\n', true));
-	delimeters->add(new Record_Delimeters('\t', true));
-	delimeters->add(new Record_Delimeters(';', false));
-	delimeters->add(new Record_Delimeters('{', false));
-	delimeters->add(new Record_Delimeters('}', false));
-	delimeters->add(new Record_Delimeters('(', false));
-	delimeters->add(new Record_Delimeters(')', false));
-	delimeters->add(new Record_Delimeters(',', false));
+	delimeters->add(new Record_Delimeters(' ', true)); // 0
+	delimeters->add(new Record_Delimeters('\n', true)); // 1
+	delimeters->add(new Record_Delimeters('\t', true)); // 2
+	delimeters->add(new Record_Delimeters(';', false)); // 3
+	delimeters->add(new Record_Delimeters('{', false)); // 4
+	delimeters->add(new Record_Delimeters('}', false)); // 5
+	delimeters->add(new Record_Delimeters('(', false)); // 6
+	delimeters->add(new Record_Delimeters(')', false)); // 7
+	delimeters->add(new Record_Delimeters(',', false)); // 8
 
 	//parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 0, false, false, false, false));
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 1, false, false, false, true)); // 1: Func1
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 1, false, false, false, true)); // 1: Func
 
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 2, true, false, false, true)); // 2: type
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1) }, 3, true, false, false, true)); // 3: identifier
@@ -122,15 +122,14 @@ void Translator::Init()
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 4), Token(1, 3), Token(0, 0), Token(2, -1),
 														   Token(3, -1), Token(1, 6), Token(0, 1), Token(0, 2) }, 65, false, false, false, true)); // 49: WhileBody
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 2) }, 45, true, false, false, true)); // 50: do
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 4) }, 46, true, false, false, true)); // 51: {
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 2) }, 50, true, false, false, true)); // 50: do
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 4) }, 51, true, false, false, true)); // 51: {
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(0, 0), Token(2, -1), Token(3, -1),
-														   Token(1, 6), Token(0, 1), Token(0, 2), Token(1, 5) }, 8, false, false, false, true)); // 55: Body
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 5) }, 0, true, false, false, true)); // 53: }
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 4), Token(1, 3), Token(0, 0), Token(2, -1),
-														   Token(3, -1), Token(1, 6), Token(0, 1), Token(0, 2) }, 65, true, false, false, true)); // 54: while
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 6) }, 65, true, false, false, true)); // 55: (
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1), Token(3, -1), Token(1, 6) }, 27, false, true, false, true)); // 56: Expression
+														   Token(1, 6), Token(0, 1), Token(0, 2), Token(0, 3), Token(1, 5) }, 8, false, false, false, true)); // 52: Body
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 5) }, 53, true, false, false, true)); // 53: }
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 2) }, 54, true, false, false, true)); // 54: while
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 6) }, 55, true, false, false, true)); // 55: (
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1), Token(3, -1), Token(1, 6) }, 56, false, true, false, true)); // 56: Expression
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 7) }, 0, true, false, true, true)); // 57: )
 
 
@@ -149,36 +148,41 @@ void Translator::Init()
 														   Token(0, 8), Token(0, 11), Token(0, 12), Token(0, 13) }, 78, false, false, false, false)); // 64: NAExpression_Tail1
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 7), Token(1, 3), Token(1, 8) }, 80, false, false, false, true)); // 65: NAExpression_Tail2
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 81, false, false, false, false)); // 66: WhileBody1
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 84, false, false, false, true)); // 67: WhileBody2
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0), Token(1, 3), Token(2, -1), Token(3, -1), Token(0, 1), Token(0, 2) }, 84, false, false, false, false)); // 66: WhileBody1
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3) }, 81, false, false, false, true)); // 67: WhileBody2
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 68, true, false, false, true)); // 68: =
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 27, false, false, false, true)); // 69: Expression
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 3) }, 68, true, false, false, true)); // 68: =
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1), Token(3, -1), Token(1, 6)  }, 27, false, false, false, true)); // 69: Expression
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 0, false, false, true, true)); // 70: Empty
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 8), Token(1, 3) }, 0, false, false, true, true)); // 70: Empty
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 71, true, false, false, true)); // 71: ,
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 72, true, false, false, true)); // 72: identifier
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 57, false, true, false, true)); // 73: Value
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 59, false, false, false, true)); // 74: Tail
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3) }, 71, true, false, false, true)); // 71: ,
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1) }, 72, true, false, false, true)); // 72: identifier
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(1, 8), Token(0, 3) }, 57, false, true, false, true)); // 73: Value
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(1, 8) }, 59, false, false, false, true)); // 74: Tail
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 0, false, false, true, true)); // 75: Empty
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(1, 8) }, 0, false, false, true, true)); // 75: Empty
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 85, false, true, false, true)); // 76: Operation
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 27, false, false, false, true)); // 77: Expression
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 3), Token(0, 4), Token(0, 5),
+														   Token(0, 6), Token(0, 7), Token(0, 8),
+														   Token(0, 9), Token(0, 10), Token(0, 11),
+														   Token(0, 12), Token(0, 13) }, 85, false, true, false, true)); // 76: Operation
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1), Token(3, -1), Token(1, 6) }, 27, false, false, false, true)); // 77: Expression
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 0, false, false, true, true)); // 78: Empty
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(1, 7), Token(1, 8) }, 0, false, false, true, true)); // 78: Empty
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 96, false, true, false, true)); // 79: NAOperation
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 27, false, false, false, true)); // 80: Expression
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 3), Token(0, 4), Token(0, 5),
+														   Token(0, 6), Token(0, 7) }, 96, false, true, false, true)); // 79: NAOperation
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(2, -1), Token(3, -1), Token(1, 6) }, 27, false, false, false, true)); // 80: Expression
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 0, false, false, true, true)); // 81: Empty
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 7), Token(1, 3), Token(1, 8) }, 0, false, false, true, true)); // 81: Empty
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 82, true, false, false, true)); // 82: {
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 8, false, true, false, true)); // 83: Body
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 0, true, false, true, true)); // 84: }
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 4) }, 82, true, false, false, true)); // 82: {
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(0, 0), Token(2, -1), Token(3, -1),
+														   Token(1, 6), Token(0, 1), Token(0, 2), Token(1, 5) }, 8, false, true, false, true)); // 83: Body
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 5) }, 0, true, false, true, true)); // 84: }
 
-	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 0) }, 13, false, false, false, true)); // 85: Action
+	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(1, 3), Token(0, 0), Token(2, -1), Token(3, -1), Token(0, 1), Token(0, 2) }, 13, false, false, false, true)); // 85: Action
 
 
 	parsingTable->add(new ParsingTable_Record(new Token[]{ Token(0, 3) }, 104, false, false, false, false)); // 86: Operation1
