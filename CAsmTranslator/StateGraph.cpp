@@ -45,7 +45,7 @@ Error* getResult_L(const char* buffer, std::vector<Token*>* tokens)
 	int len = (std::strlen(buffer) + 1);
 	char* name = (char*)std::malloc(len * sizeof(char));
 	strcpy_s(name, len, buffer);
-	tokens->push_back(new Token(2, Translator::identifiers->add(new Record_Identifiers(name, nullptr, Type::type_int))));
+	tokens->push_back(new Token(2, Translator::identifiers->add(new Record_Identifiers(name, Type::type_int))));
 	return nullptr;
 }
 

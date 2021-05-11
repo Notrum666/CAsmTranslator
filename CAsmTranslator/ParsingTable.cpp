@@ -1,6 +1,6 @@
 #include "ParsingTable.h"
 
-ParsingTable_Record::ParsingTable_Record(Token* terminals, int jump, bool accept, bool stack, bool ret, bool error)
+ParsingTable_Record::ParsingTable_Record(std::vector<Token*> terminals, int jump, bool accept, bool stack, bool ret, bool error)
 {
 	this->terminals = terminals;
 	this->jump = jump;

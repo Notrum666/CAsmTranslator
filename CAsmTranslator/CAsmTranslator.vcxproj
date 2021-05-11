@@ -143,6 +143,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ParsingRule.cpp" />
     <ClCompile Include="ParsingTable.cpp" />
+    <ClCompile Include="ParsingTree.cpp" />
     <ClCompile Include="StateGraph.cpp" />
     <ClCompile Include="Table_Constants.cpp" />
     <ClCompile Include="Table_Identifiers.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="ParsingRule.h" />
     <ClInclude Include="ParsingTable.h" />
+    <ClInclude Include="ParsingTree.h" />
     <ClInclude Include="StateGraph.h" />
     <ClInclude Include="Table_Constants.h" />
     <ClInclude Include="Table_Identifiers.h" />

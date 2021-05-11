@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <regex>
+#include <stack>
 #include "StateGraph.h"
 #include "Table_Keywords.h"
 #include "Table_Delimeters.h"
 #include "Table_Identifiers.h"
 #include "Table_Constants.h"
 #include "ParsingTable.h"
+#include "ParsingTree.h"
 #include "Error.h"
 
 class Translator

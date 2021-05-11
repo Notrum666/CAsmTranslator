@@ -6,10 +6,10 @@
 
 struct ParsingTable_Record
 {
-	Token* terminals;
+	std::vector<Token*> terminals;
 	int jump;
 	bool accept, stack, ret, error;
-	ParsingTable_Record(Token* terminals, int jump, bool accept, bool stack, bool ret, bool error);
+	ParsingTable_Record(std::vector<Token*> terminals, int jump, bool accept, bool stack, bool ret, bool error);
 };
 
 class ParsingTable

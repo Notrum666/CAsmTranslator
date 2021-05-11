@@ -7,9 +7,9 @@ struct Record_Identifiers
 public:
 	const char* name;
 	Type type;
-	void* value;
+	bool declared;
 	bool initialized;
-	Record_Identifiers(const char* name, void* value, Type type);
+	Record_Identifiers(const char* name, Type type);
 };
 
 class Table_Identifiers

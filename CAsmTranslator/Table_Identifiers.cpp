@@ -1,9 +1,8 @@
 #include "Table_Identifiers.h"
 
-Record_Identifiers::Record_Identifiers(const char* name, void* value, Type type)
+Record_Identifiers::Record_Identifiers(const char* name, Type type)
 {
 	this->name = name;
-	this->value = value;
 	this->type = type;
 	initialized = false;
 }
@@ -54,5 +53,5 @@ void Table_Identifiers::print()
 {
 	printf_s("Identifiers table:\n");
 	for (int i = 0; i < records.size(); i++)
-		printf_s("%d. %s %s %d %d\n", i, records[i]->name, "int", records[i]->value, records[i]->initialized);
+		printf_s("%d. %s %s %d %d\n", i, records[i]->name, "int", records[i]->initialized);
 }
