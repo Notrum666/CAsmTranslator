@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Error.cpp" />
+    <ClCompile Include="ExpressionTree.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ParsingRule.cpp" />
     <ClCompile Include="ParsingTable.cpp" />
@@ -155,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Error.h" />
+    <ClInclude Include="ExpressionTree.h" />
     <ClInclude Include="ParsingRule.h" />
     <ClInclude Include="ParsingTable.h" />
     <ClInclude Include="ParsingTree.h" />

@@ -4,6 +4,7 @@ Record_Identifiers::Record_Identifiers(const char* name, Type type)
 {
 	this->name = name;
 	this->type = type;
+	declared = false;
 	initialized = false;
 }
 

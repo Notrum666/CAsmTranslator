@@ -315,11 +315,165 @@ ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, Parsin
 	return root;
 }
 
-std::vector<Token*>* getPostfix(ParsingTree* tree, Error** error)
+//keywords->add(new Record_Keywords("=")); 3
+//keywords->add(new Record_Keywords("+")); 4
+//keywords->add(new Record_Keywords("-")); 5
+//keywords->add(new Record_Keywords("<")); 6
+//keywords->add(new Record_Keywords(">")); 7
+//keywords->add(new Record_Keywords("==")); 8
+//keywords->add(new Record_Keywords("+=")); 9
+//keywords->add(new Record_Keywords("-=")); 10
+//keywords->add(new Record_Keywords("<=")); 11
+//keywords->add(new Record_Keywords(">=")); 12
+//keywords->add(new Record_Keywords("!=")); 13
+
+int getOperatorPriority(int record_id, bool* out_isLeftAssociative)
 {
-	std::vector<Token*>* tokens = new std::vector<Token*>();
-	std::stack<Token*> stack = std::stack<Token*>();
-	return tokens;
+	*out_isLeftAssociative = true;
+	switch (record_id)
+	{
+	case 3:
+	case 9:
+	case 10:
+		*out_isLeftAssociative = false;
+		return 0;
+	case 6:
+	case 7:
+	case 8:
+	case 11:
+	case 12:
+	case 13:
+		return 1;
+	case 4:
+	case 5:
+		return 2;
+	}
+}
+
+Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<Token*>* stack)
+{
+	if (tree->token != nullptr)
+	{
+		switch (tree->token->table_id)
+		{
+		case 0:
+		{
+			int curPriority, stackPriority;
+			bool isLeftAssotiative;
+			curPriority = getOperatorPriority(tree->token->record_id, &isLeftAssotiative);
+			while (stack->size() > 0)
+			{
+				stackPriority = getOperatorPriority(stack->top()->record_id, &isLeftAssotiative);
+				if (stackPriority > curPriority || (stackPriority == curPriority && isLeftAssotiative))
+				{
+					result->push_back(stack->top());
+					stack->pop();
+				}
+				else
+					break;
+			}
+			stack->push(tree->token);
+			break;
+		}
+		case 1:
+		{
+			switch (tree->token->record_id)
+			{
+			case 6: // (
+				stack->push(tree->token);
+				break;
+			case 7: // )
+				while (stack->top()->table_id != 1 || stack->top()->record_id != 6)
+				{
+					result->push_back(stack->top());
+					stack->pop();
+				}
+				stack->pop();
+				break;
+			}
+			break;
+		}
+		case 2:
+		{
+			Record_Identifiers* record = Translator::identifiers->get(tree->token->record_id);
+			if (!record->declared)
+				return new Error("", 0, 0, "Identifier is not declared.");
+			result->push_back(tree->token);
+			break;
+		}
+		case 3:
+		{
+			result->push_back(tree->token);
+			break;
+		}
+		}
+			//if (tree->leaves->at(1)->leaves->size() != 0)
+			//{
+			//	int id = tree->leaves->at(1)->leaves->at(0)->token->record_id;
+			//	if (id == 3 || id == 9 || id == 10)
+			//		record->initialized = true;
+			//	else
+			//		if (!record->initialized)
+			//			return new Error("", 0, 0, "Identifier is not initialized.");
+			//}
+			//else
+			//	if (!record->initialized)
+			//		return new Error("", 0, 0, "Identifier is not initialized.");
+	}
+	for (int i = 0; i < tree->leaves->size(); i++)
+	{
+		Error* error = _getPostfix(tree->leaves->at(i), result, stack);
+		if (error != nullptr)
+			return error;
+	}
+	return nullptr;
+}
+
+//Error* getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<Token*>* stack)
+//{
+//	Error* error = _getPostfix(tree, result, stack);
+//	if (error != nullptr)
+//		return error;
+//	while (stack->size() > 0)
+//	{
+//		result->push_back(stack->top());
+//		stack->pop();
+//	}
+//	return nullptr;
+//}
+
+Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
+{
+	std::vector<Token*> postfix = std::vector<Token*>();
+	std::stack<Token*> tokenStack = std::stack<Token*>();
+	Error* error = _getPostfix(tree, &postfix, &tokenStack);
+	if (error != nullptr)
+		return error;
+	while (tokenStack.size() > 0)
+	{
+		postfix.push_back(tokenStack.top());
+		tokenStack.pop();
+	}
+
+	std::stack<ExpressionTree*> expressionStack = std::stack<ExpressionTree*>();
+	for (auto iter : postfix)
+	{
+		if (iter->table_id == 0)
+		{
+			ExpressionTree* tree = new ExpressionTree(iter);
+			tree->left = expressionStack.top();
+			expressionStack.pop();
+			tree->right = expressionStack.top();
+			expressionStack.pop();
+			expressionStack.push(tree);
+		}
+		else
+			expressionStack.push(new ExpressionTree(iter));
+	}
+	*out_expressionTree = expressionStack.top();
+	expressionStack.pop();
+
+	return nullptr;
 }
 
 Error* checkLogicErrors(ParsingTree* tree)
@@ -331,7 +485,12 @@ Error* checkLogicErrors(ParsingTree* tree)
 			return new Error("", 0, 0, "Identifier is alredy declared.");
 		record->declared = true;
 		if (tree->leaves->at(2)->leaves->size() > 0)
+		{
+			Error* error = checkLogicErrors(tree->leaves->at(2)->leaves->at(1));
+			if (error != nullptr)
+				return error;
 			record->initialized = true;
+		}
 		if (tree->leaves->at(3)->leaves->size() > 0)
 			return checkLogicErrors(tree->leaves->at(3));
 		return nullptr;
@@ -343,20 +502,52 @@ Error* checkLogicErrors(ParsingTree* tree)
 			return new Error("", 0, 0, "Identifier is alredy declared.");
 		record->declared = true;
 		if (tree->leaves->at(2)->leaves->size() > 0)
+		{
+			Error* error = checkLogicErrors(tree->leaves->at(2)->leaves->at(1));
+			if (error != nullptr)
+				return error;
 			record->initialized = true;
+		}
 		if (tree->leaves->at(3)->leaves->size() > 0)
 			return checkLogicErrors(tree->leaves->at(3));
 		return nullptr;
 	}
-	if (tree->token != nullptr && tree->token->table_id == 2)
-		if (!Translator::identifiers->get(tree->token->record_id)->declared)
-			return new Error("", 0, 0, "Identifier is not declared.");
+	if (tree->state >= 27 && tree->state <= 29) // Expression
+	{
+		std::vector<Token*> result = std::vector<Token*>();
+		std::stack<Token*> stack = std::stack<Token*>();
+		Error* error = getPostfix(tree, &result, &stack);
+		if (error != nullptr)
+			return error;
+
+		for (int i = 0; i < result.size(); i++)
+		{
+			switch (result[i]->table_id)
+			{
+			case 0:
+				printf("%s ", Translator::keywords->get(result[i]->record_id)->keyword);
+				break;
+			case 1:
+				printf("%c ", Translator::delimeters->get(result[i]->record_id)->symbol);
+				break;
+			case 2:
+				printf("%s ", Translator::identifiers->get(result[i]->record_id)->name);
+				break;
+			case 3:
+				printf("%d ", *(int*)Translator::constants->get(result[i]->record_id)->value);
+				break;
+			}
+		}
+
+		return nullptr;
+	}
 	for (int i = 0; i < tree->leaves->size(); i++)
 	{
 		Error* error = checkLogicErrors(tree->leaves->at(i));
 		if (error != nullptr)
 			return error;
 	}
+	return nullptr;
 }
 
 Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
@@ -426,11 +617,14 @@ Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 		buffer[--pos] = 0;
 
 	std::stack<std::pair<int, ParsingTree*>>* stack = new std::stack<std::pair<int, ParsingTree*>>();
-	Error* parsingError = nullptr;
-	ParsingTree* tree = parse(&tokens, stack, &parsingError);
+	Error* error = nullptr;
+	ParsingTree* tree = parse(&tokens, stack, &error);
 	delete stack;
-	if (parsingError != nullptr)
-		return parsingError;
+	if (error != nullptr)
+		return error;
+	error = checkLogicErrors(tree);
+	if (error != nullptr)
+		return error;
 
 	
 

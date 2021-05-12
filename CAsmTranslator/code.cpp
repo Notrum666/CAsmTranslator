@@ -1,6 +1,6 @@
 int main()
 {
-	int a = 10;
+	int a = 1 < 2 + 3;
 	//abc += 10;
 	//int abc;
 	//abc = 5;

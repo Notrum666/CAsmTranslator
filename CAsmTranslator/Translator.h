@@ -10,6 +10,7 @@
 #include "Table_Constants.h"
 #include "ParsingTable.h"
 #include "ParsingTree.h"
+#include "ExpressionTree.h"
 #include "Error.h"
 
 class Translator
