@@ -361,7 +361,7 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 	{
 		switch (tree->token->table_id)
 		{
-		case 0:
+		case TABLE_KEYWORDS:
 		{
 			int curPriority, stackPriority;
 			bool isLeftAssotiative;
@@ -380,7 +380,7 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 			stack->push(tree->token);
 			break;
 		}
-		case 1:
+		case TABLE_DELIMETERS:
 		{
 			switch (tree->token->record_id)
 			{
@@ -388,7 +388,7 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 				stack->push(tree->token);
 				break;
 			case 7: // )
-				while (stack->top()->table_id != 1 || stack->top()->record_id != 6)
+				while (stack->top()->table_id != TABLE_DELIMETERS || stack->top()->record_id != 6)
 				{
 					result->push_back(stack->top());
 					stack->pop();
@@ -398,7 +398,7 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 			}
 			break;
 		}
-		case 2:
+		case TABLE_IDENTIFIERS:
 		{
 			Record_Identifiers* record = Translator::identifiers->get(tree->token->record_id);
 			if (!record->declared)
@@ -406,7 +406,7 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 			result->push_back(tree->token);
 			break;
 		}
-		case 3:
+		case TABLE_CONSTANTS:
 		{
 			result->push_back(tree->token);
 			break;
@@ -457,7 +457,7 @@ Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
 	std::stack<ExpressionTree*> expressionStack = std::stack<ExpressionTree*>();
 	for (auto iter : postfix)
 	{
-		if (iter->table_id == 0)
+		if (iter->table_id == TABLE_KEYWORDS)
 		{
 			ExpressionTree* tree = new ExpressionTree(iter);
 			tree->right = expressionStack.top();
@@ -471,9 +471,9 @@ Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
 					return new Error("", 0, 0, "Expression must be modifiable.");
 				Translator::identifiers->get(tree->left->token->record_id)->initialized = true;
 			}
-			if (tree->right->token->table_id == 2 && !Translator::identifiers->get(tree->right->token->record_id)->initialized)
+			if (tree->right->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->right->token->record_id)->initialized)
 				return new Error("", 0, 0, "Variable is not initialized.");
-			if (tree->left->token->table_id == 2 && !Translator::identifiers->get(tree->left->token->record_id)->initialized)
+			if (tree->left->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->left->token->record_id)->initialized)
 				return new Error("", 0, 0, "Variable is not initialized.");
 		}
 		else
