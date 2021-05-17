@@ -91,7 +91,7 @@ StateGraph::StateGraph()
 	StateNode* MLCS = new StateNode(getResult_DoNothing);
 	StateNode* MLCE = new StateNode(getResult_DoNothing);
 
-	std::regex* regex_delimeters = new std::regex("[ \n\t;(){}]");
+	std::regex* regex_delimeters = new std::regex("[ \n\t;(){}\,]");
 	std::regex* regex_letters = new std::regex("[a-zA-Z_]");
 	std::regex* regex_operators = new std::regex("[\\+\\-=!<>]");
 	std::regex* regex_numbers = new std::regex("[0-9]");

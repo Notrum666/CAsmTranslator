@@ -1,7 +1,5 @@
 int main()
 {
-	while (3 > 2)
-	{
-
-	}
+    int abc;
+    int m = 5, n;
 }
