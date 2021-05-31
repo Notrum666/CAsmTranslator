@@ -6,6 +6,8 @@
 #define TABLE_IDENTIFIERS 2
 #define TABLE_CONSTANTS 3
 
+#define MESSAGE_LEN 100
+
 Table_Keywords* Translator::keywords = new Table_Keywords();
 Table_Delimeters* Translator::delimeters = new Table_Delimeters();
 Table_Identifiers* Translator::identifiers = new Table_Identifiers();
@@ -48,12 +50,23 @@ void Translator::Init()
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 6) }, 4, true, false, false, true)); // 4: (
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 7) }, 5, true, false, false, true)); // 5: )
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 4) }, 6, true, false, false, true)); // 6: {
-	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), new Token(TABLE_KEYWORDS, 0), new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1),
-																   new Token(TABLE_DELIMETERS, 6), new Token(TABLE_KEYWORDS, 1), new Token(TABLE_KEYWORDS, 2), new Token(TABLE_DELIMETERS, 5) }, 8, false, true, false, true)); // 7: Body
+	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), 
+																   new Token(TABLE_KEYWORDS, 0), 
+		                                                           new Token(TABLE_IDENTIFIERS, -1), 
+		                                                           new Token(TABLE_CONSTANTS, -1),
+																   new Token(TABLE_DELIMETERS, 6), 
+		                                                           new Token(TABLE_KEYWORDS, 1), 
+		                                                           new Token(TABLE_KEYWORDS, 2), 
+		                                                           new Token(TABLE_DELIMETERS, 5) }, 8, false, true, false, true)); // 7: Body
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 5) }, 0, true, false, true, true)); // 8: }
 
-	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), new Token(TABLE_KEYWORDS, 0), new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1),
-																   new Token(TABLE_DELIMETERS, 6), new Token(TABLE_KEYWORDS, 1), new Token(TABLE_KEYWORDS, 2) }, 10, false, false, false, false)); // 9: Body1
+	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), 
+																   new Token(TABLE_KEYWORDS, 0), 
+																   new Token(TABLE_IDENTIFIERS, -1), 
+																   new Token(TABLE_CONSTANTS, -1),
+																   //new Token(TABLE_DELIMETERS, 6), 
+																   new Token(TABLE_KEYWORDS, 1), 
+																   new Token(TABLE_KEYWORDS, 2) }, 10, false, false, false, false)); // 9: Body1
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 5) }, 12, false, false, false, true)); // 10: Body2
 
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), new Token(TABLE_KEYWORDS, 0), new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1),
@@ -109,7 +122,7 @@ void Translator::Init()
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_KEYWORDS, 4), new Token(TABLE_KEYWORDS, 5), new Token(TABLE_KEYWORDS, 6),
 																   new Token(TABLE_KEYWORDS, 7), new Token(TABLE_KEYWORDS, 8), new Token(TABLE_KEYWORDS, 9),
 																   new Token(TABLE_KEYWORDS, 12), new Token(TABLE_KEYWORDS, 13), new Token(TABLE_DELIMETERS, 3),
-																   new Token(TABLE_DELIMETERS, 7) }, 63, false, false, false, true)); // 40: NAExpression_Tail
+																   new Token(TABLE_DELIMETERS, 7), new Token(TABLE_DELIMETERS, 8) }, 63, false, false, false, true)); // 40: NAExpression_Tail
 
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 6) }, 41, true, false, false, true)); // 41: (
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1), new Token(TABLE_DELIMETERS, 6) }, 27, false, true, false, true)); // 42: Expression
@@ -161,7 +174,7 @@ void Translator::Init()
 
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 8), new Token(TABLE_DELIMETERS, 3) }, 0, false, false, true, true)); // 70: Empty
 
-	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3) }, 71, true, false, false, true)); // 71: ,
+	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 8) }, 71, true, false, false, true)); // 71: ,
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_IDENTIFIERS, -1) }, 72, true, false, false, true)); // 72: identifier
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), new Token(TABLE_DELIMETERS, 8), new Token(TABLE_KEYWORDS, 3) }, 57, false, true, false, true)); // 73: Value
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), new Token(TABLE_DELIMETERS, 8) }, 59, false, false, false, true)); // 74: Tail
@@ -249,12 +262,7 @@ ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, Parsin
 			return nullptr;
 		}
 		curToken = (*tokens)[0];
-		//if (curToken->table_id == 0 && curToken->record_id == 9)
-		//{
-		//	curState++;
-		//	curState--;
-		//}
-		//printf("%d  ", curState);
+
 		ParsingTable_Record* record = Translator::parsingTable->get(curState);
 		int i;
 		for (i = 0; i < record->terminals.size(); i++)
@@ -264,7 +272,7 @@ ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, Parsin
 		{
 			if (record->error)
 			{
-				*out_error = new Error("", 0, 0, "Unexpected symbol: ");
+				*out_error = new Error("", 0, 0, "Unexpected symbol");
 				return nullptr;
 			}
 			else
@@ -306,14 +314,7 @@ ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, Parsin
 		{
 			if (stack->empty())
 				break;
-			// code for removing empty entries
-			//while (curTree->leaves->size() == 0 && curTree->token == nullptr && curTree != stack->top().second)
-			//{
-			//	ParsingTree* parent = curTree->parent;
-			//	parent->leaves->pop_back();
-			//	delete curTree;
-			//	curTree = parent;
-			//}
+
 			curTree = stack->top().second;
 			curState = stack->top().first;
 			stack->pop();
@@ -404,7 +405,11 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 		{
 			Record_Identifiers* record = Translator::identifiers->get(tree->token->record_id);
 			if (!record->declared)
-				return new Error("", 0, 0, "Identifier is not declared.");
+			{
+				char* message = (char*)calloc(strlen(record->name) + MESSAGE_LEN, sizeof(char));
+				sprintf_s(message, strlen(record->name) + MESSAGE_LEN, "%s: identifier is not declared.", record->name);
+				return new Error("", 0, 0, message);
+			}
 			result->push_back(tree->token);
 			break;
 		}
@@ -473,17 +478,24 @@ Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
 					return new Error("", 0, 0, "Expression must be modifiable.");
 				Translator::identifiers->get(tree->left->token->record_id)->initialized = true;
 			}
+
+			char* message = (char*)calloc(MESSAGE_LEN, sizeof(char));
 			if (tree->right->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->right->token->record_id)->initialized)
-				return new Error("", 0, 0, "Variable is not initialized.");
+			{
+				sprintf_s(message, MESSAGE_LEN, "%s: variable is not initialized.\0", Translator::identifiers->get(tree->right->token->record_id)->name);
+				return new Error("", 0, 0, message);
+			}
 			if (tree->left->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->left->token->record_id)->initialized)
-				return new Error("", 0, 0, "Variable is not initialized.");
+			{
+				sprintf_s(message, MESSAGE_LEN, "%s : variable is not initialized.\0", Translator::identifiers->get(tree->left->token->record_id)->name);
+				return new Error("", 0, 0, message);
+			}
 		}
 		else
 			expressionStack.push(new ExpressionTree(iter));
 	}
 	*out_expressionTree = expressionStack.top();
 	expressionStack.pop();
-
 	return nullptr;
 }
 
@@ -493,7 +505,11 @@ Error* checkLogicErrors(ParsingTree* tree)
 	{
 		Record_Identifiers* record = Translator::identifiers->get(tree->leaves->at(1)->token->record_id);
 		if (record->declared)
-			return new Error("", 0, 0, "Identifier is alredy declared.");
+		{
+			char* message = (char*)calloc(MESSAGE_LEN, sizeof(char));
+			sprintf_s(message, MESSAGE_LEN, "%s: identifier is already declared.\0", record->name);
+			return new Error("", 0, 0, message);
+		}
 		record->declared = true;
 		if (tree->leaves->at(2)->leaves->size() > 0)
 		{
