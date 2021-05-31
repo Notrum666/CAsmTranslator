@@ -1,10 +1,10 @@
 #include "Types.h"
 
-bool equal(void* lhs, void* rhs, Type type)
+bool equal(void* lhs, void* rhs, ValueType type)
 {
 	switch (type)
 	{
-	case Type::type_int:
+	case ValueType::INT32:
 		return *((int*)lhs) == *((int*)rhs);
 		break;
 	//case Type::type_string:

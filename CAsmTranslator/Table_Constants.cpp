@@ -1,7 +1,7 @@
 #include "Table_Constants.h"
 #include <vector>
 
-Record_Constants::Record_Constants(void* value, Type type)
+Record_Constants::Record_Constants(void* value, ValueType type)
 {
 	this->value = value;
 	this->type = type;

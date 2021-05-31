@@ -6,8 +6,8 @@ struct Record_Constants
 {
 public:
 	void* value;
-	Type type;
-	Record_Constants(void* value, Type type);
+	ValueType type;
+	Record_Constants(void* value, ValueType type);
 };
 
 class Table_Constants

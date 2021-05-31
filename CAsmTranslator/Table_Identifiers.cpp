@@ -1,9 +1,10 @@
 #include "Table_Identifiers.h"
 
-Record_Identifiers::Record_Identifiers(const char* name, Type type)
+Record_Identifiers::Record_Identifiers(const char* name, ValueType valueType)
 {
 	this->name = name;
-	this->type = type;
+	this->valueType = valueType;
+	identifierType = IdentifierType::VARIABLE;
 	declared = false;
 	initialized = false;
 }
@@ -48,6 +49,26 @@ int Table_Identifiers::getIdByName(const char* name)
 		if (!std::strcmp(records[i]->name, name))
 			return i;
 	return -1;
+}
+
+std::vector<Record_Identifiers*>::iterator Table_Identifiers::begin()
+{
+	return records.begin();
+}
+
+std::vector<Record_Identifiers*>::iterator Table_Identifiers::end()
+{
+	return records.end();
+}
+
+std::vector<Record_Identifiers*>::const_iterator Table_Identifiers::begin() const
+{
+	return records.begin();
+}
+
+std::vector<Record_Identifiers*>::const_iterator Table_Identifiers::end() const
+{
+	return records.end();
 }
 
 void Table_Identifiers::print()

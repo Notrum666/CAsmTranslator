@@ -279,6 +279,8 @@ ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, Parsin
 
 		if (record->accept)
 		{
+			if (curToken->table_id == TABLE_IDENTIFIERS && curTree->state == 0)
+				Translator::identifiers->get(curToken->record_id)->identifierType = IdentifierType::FUNCTION;
 			curTree->add(new ParsingTree(curState, curToken, curTree));
 			tokens->erase(tokens->begin());
 		}
@@ -528,17 +530,18 @@ Error* checkLogicErrors(ParsingTree* tree)
 		if (error != nullptr)
 			return error;
 
-		std::vector<Token*>* result = exprTree->getInfix();
-		for (auto token : *result)
-			printToken(token);
-		delete result;
-
-		printf("\n");
-
-		result = exprTree->getPostfix();
-		for (auto token : *result)
-			printToken(token);
-		delete result;
+		// printing infix and postfix notations of each expression
+		//std::vector<Token*>* result = exprTree->getInfix();
+		//for (auto token : *result)
+		//	printToken(token);
+		//delete result;
+		//
+		//printf("\n");
+		//
+		//result = exprTree->getPostfix();
+		//for (auto token : *result)
+		//	printToken(token);
+		//delete result;
 
 		return nullptr;
 	}
@@ -643,6 +646,20 @@ Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 	//	else
 	//		fprintf_s(file_out, "(%d,%d)", token->table_id, token->record_id);
 	//}
+
+	fprintf_s(file_out, ".386\n.model flat, stdcall\n.data\n");
+
+	for (auto iter : *identifiers)
+	{
+		if (iter->identifierType != IdentifierType::VARIABLE)
+			continue;
+		fprintf_s(file_out, "%s dword ?\n", iter->name);
+	}
+
+	fprintf_s(file_out, ".code\n");
+
+	fprintf_s(file_out, "end main");
+
 	fclose(file_in);
 	fclose(file_out);
 	return nullptr;

@@ -6,10 +6,11 @@ struct Record_Identifiers
 {
 public:
 	const char* name;
-	Type type;
+	ValueType valueType;
+	IdentifierType identifierType;
 	bool declared;
 	bool initialized;
-	Record_Identifiers(const char* name, Type type);
+	Record_Identifiers(const char* name, ValueType valueType);
 };
 
 class Table_Identifiers
@@ -23,5 +24,9 @@ public:
 	Record_Identifiers* getByName(const char* keyword);
 	int getId(Record_Identifiers* record);
 	int getIdByName(const char* keyword);
+	std::vector<Record_Identifiers*>::iterator begin();
+	std::vector<Record_Identifiers*>::iterator end();
+	std::vector<Record_Identifiers*>::const_iterator begin() const;
+	std::vector<Record_Identifiers*>::const_iterator end() const;
 	void print();
 };

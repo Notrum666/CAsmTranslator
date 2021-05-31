@@ -45,7 +45,7 @@ Error* getResult_L(const char* buffer, std::vector<Token*>* tokens)
 	int len = (std::strlen(buffer) + 1);
 	char* name = (char*)std::malloc(len * sizeof(char));
 	strcpy_s(name, len, buffer);
-	tokens->push_back(new Token(2, Translator::identifiers->add(new Record_Identifiers(name, Type::type_int))));
+	tokens->push_back(new Token(2, Translator::identifiers->add(new Record_Identifiers(name, ValueType::INT32))));
 	return nullptr;
 }
 
@@ -66,7 +66,7 @@ Error* getResult_N(const char* buffer, std::vector<Token*>* tokens)
 	int* value = (int*)std::malloc(sizeof(int));
 	*value = atoi(buffer);
 	if ((id = Translator::constants->getIdByValue(value)) == -1)
-		id = Translator::constants->add(new Record_Constants(value, Type::type_int));
+		id = Translator::constants->add(new Record_Constants(value, ValueType::INT32));
 	tokens->push_back(new Token(3, id));
 	return nullptr;
 }
