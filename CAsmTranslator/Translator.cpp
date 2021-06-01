@@ -334,6 +334,10 @@ ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, Parsin
 			if (stack->empty())
 				break;
 
+			if (stack->size() == 0)
+			{
+				return nullptr;
+			}
 			curTree = stack->top().second;
 			curState = stack->top().first;
 			stack->pop();
@@ -376,7 +380,7 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 			int curPriority, stackPriority;
 			bool isLeftAssotiative;
 			curPriority = getOperatorPriority(tree->token->record_id, &isLeftAssotiative);
-			while (stack->size() > 0)
+			while (stack->size() > 0 && stack->top()->table_id == TABLE_KEYWORDS)
 			{
 				stackPriority = getOperatorPriority(stack->top()->record_id, &isLeftAssotiative);
 				if (stackPriority > curPriority || (stackPriority == curPriority && isLeftAssotiative))
@@ -398,6 +402,10 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 				stack->push(tree->token);
 				break;
 			case 7: // )
+				if (stack->size() == 0)
+				{
+					return nullptr;
+				}
 				while (stack->top()->table_id != TABLE_DELIMETERS || stack->top()->record_id != 6)
 				{
 					result->push_back(stack->top());
@@ -804,23 +812,6 @@ Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 	error = checkLogicErrors(tree);
 	if (error != nullptr)
 		return error;
-
-	
-
-	//for (auto token : tokens)
-	//{
-	//	if (token->table_id == 1)
-	//	{
-	//		if (token->record_id == 1)
-	//			fprintf_s(file_out, "\n");
-	//		else if (token->record_id == 2)
-	//			fprintf_s(file_out, "\t");
-	//		else
-	//			fprintf_s(file_out, "(%d,%d)", token->table_id, token->record_id);
-	//	}
-	//	else
-	//		fprintf_s(file_out, "(%d,%d)", token->table_id, token->record_id);
-	//}
 
 	fprintf_s(file_out, ".386\n.model flat, stdcall\n.data\n");
 

@@ -9,7 +9,12 @@ push 1
 pop eax
 mov a, eax
 
-push 5
+push 3
+pop ebx
+mov eax, a
+add eax, ebx
+mov a, eax
+push eax
 pop ebx
 mov eax, a
 add eax, ebx
