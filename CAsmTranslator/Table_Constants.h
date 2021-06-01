@@ -8,6 +8,7 @@ public:
 	void* value;
 	ValueType type;
 	Record_Constants(void* value, ValueType type);
+	char* getString();
 };
 
 class Table_Constants

@@ -64,7 +64,7 @@ void Translator::Init()
 																   new Token(TABLE_KEYWORDS, 0), 
 																   new Token(TABLE_IDENTIFIERS, -1), 
 																   new Token(TABLE_CONSTANTS, -1),
-																   //new Token(TABLE_DELIMETERS, 6), 
+																   new Token(TABLE_DELIMETERS, 6), 
 																   new Token(TABLE_KEYWORDS, 1), 
 																   new Token(TABLE_KEYWORDS, 2) }, 10, false, false, false, false)); // 9: Body1
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 5) }, 12, false, false, false, true)); // 10: Body2
@@ -143,11 +143,11 @@ void Translator::Init()
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_KEYWORDS, 2) }, 50, true, false, false, true)); // 50: do
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 4) }, 51, true, false, false, true)); // 51: {
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), new Token(TABLE_KEYWORDS, 0), new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1),
-																   new Token(TABLE_DELIMETERS, 6), new Token(TABLE_KEYWORDS, 1), new Token(TABLE_KEYWORDS, 2), new Token(TABLE_KEYWORDS, 3), new Token(TABLE_DELIMETERS, 5) }, 8, false, false, false, true)); // 52: Body
+																   new Token(TABLE_DELIMETERS, 6), new Token(TABLE_KEYWORDS, 1), new Token(TABLE_KEYWORDS, 2), new Token(TABLE_KEYWORDS, 3), new Token(TABLE_DELIMETERS, 5) }, 8, false, true, false, true)); // 52: Body
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 5) }, 53, true, false, false, true)); // 53: }
-	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_KEYWORDS, 2) }, 54, true, false, false, true)); // 54: while
+	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_KEYWORDS, 1) }, 54, true, false, false, true)); // 54: while
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 6) }, 55, true, false, false, true)); // 55: (
-	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1), new Token(TABLE_DELIMETERS, 6) }, 56, false, true, false, true)); // 56: Expression
+	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1), new Token(TABLE_DELIMETERS, 6) }, 27, false, true, false, true)); // 56: Expression
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 7) }, 0, true, false, true, true)); // 57: )
 
 
@@ -246,6 +246,25 @@ void Translator::Init()
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_KEYWORDS, 13) }, 0, true, false, true, true)); // 123: !=
 }
 
+void printToken(Token* token)
+{
+	switch (token->table_id)
+	{
+	case TABLE_KEYWORDS:
+		printf("%s ", Translator::keywords->get(token->record_id)->keyword);
+		break;
+	case TABLE_DELIMETERS:
+		printf("%c ", Translator::delimeters->get(token->record_id)->symbol);
+		break;
+	case TABLE_IDENTIFIERS:
+		printf("%s ", Translator::identifiers->get(token->record_id)->name);
+		break;
+	case TABLE_CONSTANTS:
+		printf("%d ", *(int*)Translator::constants->get(token->record_id)->value);
+		break;
+	}
+}
+
 ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, ParsingTree*>>* stack, Error** out_error)
 {
 	ParsingTree* root = new ParsingTree(0, nullptr, nullptr);
@@ -322,18 +341,6 @@ ParsingTree* parse(std::vector<Token*>* tokens, std::stack<std::pair<int, Parsin
 	}
 	return root;
 }
-
-//keywords->add(new Record_Keywords("=")); 3
-//keywords->add(new Record_Keywords("+")); 4
-//keywords->add(new Record_Keywords("-")); 5
-//keywords->add(new Record_Keywords("<")); 6
-//keywords->add(new Record_Keywords(">")); 7
-//keywords->add(new Record_Keywords("==")); 8
-//keywords->add(new Record_Keywords("+=")); 9
-//keywords->add(new Record_Keywords("-=")); 10
-//keywords->add(new Record_Keywords("<=")); 11
-//keywords->add(new Record_Keywords(">=")); 12
-//keywords->add(new Record_Keywords("!=")); 13
 
 int getOperatorPriority(int record_id, bool* out_isLeftAssociative)
 {
@@ -429,25 +436,6 @@ Error* _getPostfix(ParsingTree* tree, std::vector<Token*>* result, std::stack<To
 	return nullptr;
 }
 
-void printToken(Token* token)
-{
-	switch (token->table_id)
-	{
-	case 0:
-		printf("%s ", Translator::keywords->get(token->record_id)->keyword);
-		break;
-	case 1:
-		printf("%c ", Translator::delimeters->get(token->record_id)->symbol);
-		break;
-	case 2:
-		printf("%s ", Translator::identifiers->get(token->record_id)->name);
-		break;
-	case 3:
-		printf("%d ", *(int*)Translator::constants->get(token->record_id)->value);
-		break;
-	}
-}
-
 Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
 {
 	std::vector<Token*> postfix = std::vector<Token*>();
@@ -472,11 +460,12 @@ Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
 			tree->left = expressionStack.top();
 			expressionStack.pop();
 			expressionStack.push(tree);
-			if (iter->record_id == 3 || iter->record_id == 8 || iter->record_id == 9)
+			if (iter->record_id == 3 || iter->record_id == 9 || iter->record_id == 10)
 			{
-				if (tree->left->token->table_id != 2)
+				if (tree->left->token->table_id != TABLE_IDENTIFIERS)
 					return new Error("", 0, 0, "Expression must be modifiable.");
-				Translator::identifiers->get(tree->left->token->record_id)->initialized = true;
+				if (iter->record_id == 3)
+					Translator::identifiers->get(tree->left->token->record_id)->initialized = true;
 			}
 
 			char* message = (char*)calloc(MESSAGE_LEN, sizeof(char));
@@ -499,6 +488,32 @@ Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
 	return nullptr;
 }
 
+Error* getExpressionTreeFromDeclaration(ParsingTree* tree, ExpressionTree** out_expressionTree)
+{
+	ParsingTree* expr = new ParsingTree(27, nullptr, nullptr);
+	ParsingTree* ident = new ParsingTree(36, tree->leaves->at(1)->token, expr);
+	ParsingTree* exprTail = new ParsingTree(61, nullptr, expr);
+	ParsingTree* oper = new ParsingTree(85, nullptr, exprTail);
+	ParsingTree* eq = new ParsingTree(104, tree->leaves->at(2)->leaves->at(0)->token, oper);
+	expr->add(ident);
+	expr->add(exprTail);
+	exprTail->add(oper);
+	exprTail->add(tree->leaves->at(2)->leaves->at(1));
+	oper->add(eq);
+
+	Error* error = getExpressionTree(expr, out_expressionTree);
+
+	delete expr;
+	delete ident;
+	delete exprTail;
+	delete oper;
+	delete eq;
+
+	if (error != nullptr)
+		return error;
+	return nullptr;
+}
+
 Error* checkLogicErrors(ParsingTree* tree)
 {
 	if (tree->state == 26 || tree->state == 59) // Declaration or Tail
@@ -513,25 +528,11 @@ Error* checkLogicErrors(ParsingTree* tree)
 		record->declared = true;
 		if (tree->leaves->at(2)->leaves->size() > 0)
 		{
-			ParsingTree* expr = new ParsingTree(27, nullptr, nullptr);
-			ParsingTree* ident = new ParsingTree(36, tree->leaves->at(1)->token, expr);
-			ParsingTree* exprTail = new ParsingTree(61, nullptr, expr);
-			ParsingTree* oper = new ParsingTree(85, nullptr, exprTail);
-			ParsingTree* eq = new ParsingTree(104, tree->leaves->at(2)->leaves->at(0)->token, oper);
-			expr->add(ident);
-			expr->add(exprTail);
-			exprTail->add(oper);
-			exprTail->add(tree->leaves->at(2)->leaves->at(1));
-			oper->add(eq);
-
-			Error* error = checkLogicErrors(expr);
+			ExpressionTree* exprTree;
+			Error* error = getExpressionTreeFromDeclaration(tree, &exprTree);
 			if (error != nullptr)
 				return error;
-			delete expr;
-			delete ident;
-			delete exprTail;
-			delete oper;
-			delete eq;
+			delete exprTree;
 
 			record->initialized = true;
 		}
@@ -545,7 +546,7 @@ Error* checkLogicErrors(ParsingTree* tree)
 		Error* error = getExpressionTree(tree, &exprTree);
 		if (error != nullptr)
 			return error;
-
+		delete exprTree;
 		// printing infix and postfix notations of each expression
 		//std::vector<Token*>* result = exprTree->getInfix();
 		//for (auto token : *result)
@@ -568,6 +569,164 @@ Error* checkLogicErrors(ParsingTree* tree)
 			return error;
 	}
 	return nullptr;
+}
+
+void generateCodeForExpression(ExpressionTree* tree, FILE* file_out, bool pushResult = true)
+{
+
+	switch (tree->token->table_id)
+	{
+	case TABLE_IDENTIFIERS:
+		fprintf_s(file_out, "push %s\n", Translator::identifiers->get(tree->token->record_id)->name);
+		break;
+	case TABLE_CONSTANTS:
+	{
+		char* buf = Translator::constants->get(tree->token->record_id)->getString();
+		fprintf_s(file_out, "push %s\n", buf);
+		delete buf;
+		break;
+	}
+	default:
+		switch (tree->token->record_id)
+		{
+		case 3: // =
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop eax\nmov %s, eax\n", Translator::identifiers->get(tree->left->token->record_id)->name);
+			break;
+		case 4: // +
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\nadd eax, ebx\n");
+			break;
+		case 5: // -
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\nsub eax, ebx\n");
+			break;
+		case 6: // <
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\ncmp eax, ebx\nmov eax, 0\nlahf\nshr eax, 15\n");
+			break;
+		case 7: // >
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\ncmp eax, ebx\nmov eax, 0\nlahf\nand eax, 49152\ncmp eax, 0\nlahf\nshr eax, 14\nand eax, 1\n");
+			break;
+		case 8: // ==
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\ncmp eax, ebx\nmov eax, 0\nlahf\nshr eax, 14\nand eax, 1\n");
+			break;
+		case 9: // +=
+		{
+			generateCodeForExpression(tree->right, file_out);
+			const char* name = Translator::identifiers->get(tree->left->token->record_id)->name;
+			fprintf_s(file_out, "pop ebx\nmov eax, %s\nadd eax, ebx\nmov %s, eax\n", name, name);
+			break;
+		}
+		case 10: // -=
+		{
+			generateCodeForExpression(tree->right, file_out);
+			const char* name = Translator::identifiers->get(tree->left->token->record_id)->name;
+			fprintf_s(file_out, "pop ebx\nmov eax, %s\nsub eax, ebx\nmov %s, eax\n", name, name);
+			break;
+		}
+		case 11: // <=
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\ncmp eax, ebx\nmov eax, 0\nlahf\nand eax, 49152\ncmp 0, eax\nlahf\nshr eax, 15\n");
+			break;
+		case 12: // >=
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\ncmp eax, ebx\nmov eax, 0\nlahf\nshr eax, 15\nxor eax, 1\n");
+			break;
+		case 13: // !=
+			generateCodeForExpression(tree->left, file_out);
+			generateCodeForExpression(tree->right, file_out);
+			fprintf_s(file_out, "pop ebx\npop eax\ncmp eax, ebx\nmov eax, 0\nlahf\nshr eax, 14\nand eax, 1\nxor eax, 1\n");
+			break;
+		}
+		if (pushResult)
+			fprintf_s(file_out, "push eax\n");
+	}
+}
+
+void generateCodeForTree(ParsingTree* tree, FILE* file_out, int* labelCounter)
+{
+	switch (tree->state)
+	{
+	case 0:
+		fprintf_s(file_out, "%s proc\n", Translator::identifiers->get(tree->leaves->at(1)->token->record_id)->name);
+		generateCodeForTree(tree->leaves->at(5), file_out, labelCounter);
+		fprintf_s(file_out, "ret\n%s endp\n", Translator::identifiers->get(tree->leaves->at(1)->token->record_id)->name);
+		return;
+	case 8:
+		generateCodeForTree(tree->leaves->at(0), file_out, labelCounter);
+		generateCodeForTree(tree->leaves->at(1), file_out, labelCounter);
+		return;
+	case 14:
+	case 15:
+	case 16:
+	case 17:
+		generateCodeForTree(tree->leaves->at(0), file_out, labelCounter);
+		fprintf_s(file_out, "\n");
+		return;
+	case 26:
+	case 59:
+		if (tree->leaves->at(2)->leaves->size() != 0)
+		{
+			ExpressionTree* exprTree;
+			getExpressionTreeFromDeclaration(tree, &exprTree);
+			generateCodeForExpression(exprTree, file_out, false);
+			delete exprTree;
+		}
+		if (tree->leaves->at(3)->leaves->size() != 0)
+			generateCodeForTree(tree->leaves->at(3), file_out, labelCounter);
+		return;
+	case 27:
+	case 28:
+	case 29:
+	{
+		ExpressionTree* exprTree;
+		getExpressionTree(tree, &exprTree);
+		generateCodeForExpression(exprTree, file_out, false);
+		delete exprTree;
+		return;
+	}
+	case 30:
+	{
+		int label = *labelCounter;
+		(*labelCounter)++;
+		fprintf_s(file_out, "while%d:\n", label);
+		ExpressionTree* exprTree;
+		getExpressionTree(tree->leaves->at(2), &exprTree);
+		generateCodeForExpression(exprTree, file_out, true);
+		delete exprTree;
+		fprintf_s(file_out, "pop eax\ncmp eax, 0\njz while_end%d\n", label);
+		if (tree->leaves->at(4)->leaves->size() == 1)
+			generateCodeForTree(tree->leaves->at(4)->leaves->at(0), file_out, labelCounter);
+		else
+			generateCodeForTree(tree->leaves->at(4)->leaves->at(1), file_out, labelCounter);
+		fprintf_s(file_out, "jmp while%d\nwhile_end%d:\n", label, label);
+		return;
+	}
+	case 31:
+	{
+		int label = *labelCounter;
+		(*labelCounter)++;
+		fprintf_s(file_out, "dowhile%d:\n", label);
+		generateCodeForTree(tree->leaves->at(2), file_out, labelCounter);
+		ExpressionTree* exprTree;
+		getExpressionTree(tree->leaves->at(6), &exprTree);
+		generateCodeForExpression(exprTree, file_out, true);
+		delete exprTree;
+		fprintf_s(file_out, "pop eax\ncmp eax, 0\njnz dowhile%d\n", label);
+		(*labelCounter)++;
+		return;
+	}
+	}
 }
 
 Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
@@ -673,6 +832,9 @@ Error* Translator::TranslateFile(const char* pathFrom, const char* pathTo)
 	}
 
 	fprintf_s(file_out, ".code\n");
+
+	int labelCounter = 0;
+	generateCodeForTree(tree, file_out, &labelCounter);
 
 	fprintf_s(file_out, "end main");
 

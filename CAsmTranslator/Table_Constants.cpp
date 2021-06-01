@@ -7,6 +7,18 @@ Record_Constants::Record_Constants(void* value, ValueType type)
 	this->type = type;
 }
 
+char* Record_Constants::getString()
+{
+	switch (type)
+	{
+	case ValueType::INT32:
+		char* buf = (char*)calloc(12, sizeof(char));
+		_itoa_s(*((int*)value), buf, 12, 10);
+		return buf;
+	}
+	return (char*)calloc(1, sizeof(char));
+}
+
 Table_Constants::Table_Constants()
 {
 	records = std::vector<Record_Constants*>();
