@@ -5,20 +5,13 @@ a dword ?
 .code
 main proc
 
+while0:
 push 1
 pop eax
-mov a, eax
-
-push 3
-pop ebx
-mov eax, a
-add eax, ebx
-mov a, eax
-push eax
-pop ebx
-mov eax, a
-add eax, ebx
-mov a, eax
+cmp eax, 0
+jz while_end0
+jmp while0
+while_end0:
 
 ret
 main endp

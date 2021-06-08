@@ -1,6 +1,8 @@
 int main()
 {
 	int a;
-	a = 1;
-	a += (a += 3);
+	while (10 > 5)
+	{
+
+	}
 }

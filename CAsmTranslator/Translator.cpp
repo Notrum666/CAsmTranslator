@@ -522,6 +522,378 @@ Error* getExpressionTreeFromDeclaration(ParsingTree* tree, ExpressionTree** out_
 	return nullptr;
 }
 
+void optimizeExpressionTree(ExpressionTree** tree)
+{
+	ExpressionTree* t = *tree;
+	if (t->token->table_id != TABLE_KEYWORDS)
+		return;
+	optimizeExpressionTree(&(t->left));
+	optimizeExpressionTree(&(t->right));
+	switch (t->token->record_id)
+	{
+	case 3: // =
+		if (t->right->token->table_id == TABLE_IDENTIFIERS && t->right->token->record_id == t->left->token->record_id)
+		{
+			(*tree) = t->left;
+			t->left = nullptr;
+			delete t;
+		}
+		break;
+	case 4: // +
+		if (t->left->token->table_id == TABLE_CONSTANTS && *((int*)Translator::constants->get(t->left->token->record_id)->value) == 0)
+		{
+			(*tree) = t->right;
+			t->right = nullptr;
+			delete t;
+			break;
+		}
+		if (t->right->token->table_id == TABLE_CONSTANTS && *((int*)Translator::constants->get(t->right->token->record_id)->value) == 0)
+		{
+			(*tree) = t->left;
+			t->left = nullptr;
+			delete t;
+			break;
+		}
+		if (t->right->token->table_id == TABLE_CONSTANTS && t->left->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int result = left + right;
+			int id = Translator::constants->getIdByValue(&result);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = result;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	case 5: // -
+		if (t->right->token->table_id == TABLE_CONSTANTS && *((int*)Translator::constants->get(t->right->token->record_id)->value) == 0)
+		{
+			(*tree) = t->left;
+			t->left = nullptr;
+			delete t;
+			break;
+		}
+		if ((t->left->token->table_id == TABLE_IDENTIFIERS && t->right->token->table_id == TABLE_IDENTIFIERS ||
+			t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS) && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+				id = Translator::constants->add(new Record_Constants((int*)std::calloc(1, sizeof(int)), ValueType::INT32));
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int result = left - right;
+			int id = Translator::constants->getIdByValue(&result);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = result;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	case 6: // <
+		if ((t->left->token->table_id == TABLE_IDENTIFIERS && t->right->token->table_id == TABLE_IDENTIFIERS ||
+			t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS) && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+				id = Translator::constants->add(new Record_Constants((int*)std::calloc(1, sizeof(int)), ValueType::INT32));
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int value;
+			if (left < right)
+				value = 1;
+			else
+				value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	case 7: // >
+		if ((t->left->token->table_id == TABLE_IDENTIFIERS && t->right->token->table_id == TABLE_IDENTIFIERS ||
+			t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS) && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+				id = Translator::constants->add(new Record_Constants((int*)std::calloc(1, sizeof(int)), ValueType::INT32));
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int value;
+			if (left > right)
+				value = 1;
+			else
+				value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	case 8: // ==
+		if ((t->left->token->table_id == TABLE_IDENTIFIERS && t->right->token->table_id == TABLE_IDENTIFIERS ||
+			t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS) && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 1;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int value;
+			if (left == right)
+				value = 1;
+			else
+				value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	case 9: // +=
+		if (t->right->token->table_id == TABLE_CONSTANTS && *((int*)Translator::constants->get(t->right->token->record_id)->value) == 0)
+		{
+			(*tree) = t->left;
+			t->left = nullptr;
+			delete t;
+			break;
+		}
+		break;
+	case 10: // -=
+		if (t->right->token->table_id == TABLE_CONSTANTS && *((int*)Translator::constants->get(t->right->token->record_id)->value) == 0)
+		{
+			(*tree) = t->left;
+			t->left = nullptr;
+			delete t;
+			break;
+		}
+		if (t->right->token->table_id == TABLE_IDENTIFIERS && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+				id = Translator::constants->add(new Record_Constants((int*)std::calloc(1, sizeof(int)), ValueType::INT32));
+			(*tree)->token->record_id = 3;
+			(*tree)->right->token = new Token(TABLE_CONSTANTS, id);
+			delete t->right;
+			break;
+		}
+		break;
+	case 11: // <=
+		if ((t->left->token->table_id == TABLE_IDENTIFIERS && t->right->token->table_id == TABLE_IDENTIFIERS ||
+			t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS) && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 1;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int value;
+			if (left <= right)
+				value = 1;
+			else
+				value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	case 12: // >=
+		if ((t->left->token->table_id == TABLE_IDENTIFIERS && t->right->token->table_id == TABLE_IDENTIFIERS ||
+			t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS) && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 1;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int value;
+			if (left >= right)
+				value = 1;
+			else
+				value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	case 13: // !=
+		if ((t->left->token->table_id == TABLE_IDENTIFIERS && t->right->token->table_id == TABLE_IDENTIFIERS ||
+			t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS) && t->right->token->record_id == t->left->token->record_id)
+		{
+			int value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+				id = Translator::constants->add(new Record_Constants((int*)std::calloc(1, sizeof(int)), ValueType::INT32));
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
+		{
+			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
+			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
+			int value;
+			if (left != right)
+				value = 1;
+			else
+				value = 0;
+			int id = Translator::constants->getIdByValue(&value);
+			if (id == -1)
+			{
+				int* valueContainer = (int*)std::calloc(1, sizeof(int));
+				(*valueContainer) = value;
+				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
+			}
+			(*tree)->token = new Token(TABLE_CONSTANTS, id);
+			delete t->left;
+			delete t->right;
+			(*tree)->left = nullptr;
+			(*tree)->right = nullptr;
+			break;
+		}
+		break;
+	}
+}
+
 Error* checkLogicErrors(ParsingTree* tree)
 {
 	if (tree->state == 26 || tree->state == 59) // Declaration or Tail
@@ -585,13 +957,17 @@ void generateCodeForExpression(ExpressionTree* tree, FILE* file_out, bool pushRe
 	switch (tree->token->table_id)
 	{
 	case TABLE_IDENTIFIERS:
-		fprintf_s(file_out, "push %s\n", Translator::identifiers->get(tree->token->record_id)->name);
+		if (pushResult)
+			fprintf_s(file_out, "push %s\n", Translator::identifiers->get(tree->token->record_id)->name);
 		break;
 	case TABLE_CONSTANTS:
 	{
-		char* buf = Translator::constants->get(tree->token->record_id)->getString();
-		fprintf_s(file_out, "push %s\n", buf);
-		delete buf;
+		if (pushResult)
+		{
+			char* buf = Translator::constants->get(tree->token->record_id)->getString();
+			fprintf_s(file_out, "push %s\n", buf);
+			delete buf;
+		}
 		break;
 	}
 	default:
@@ -687,6 +1063,7 @@ void generateCodeForTree(ParsingTree* tree, FILE* file_out, int* labelCounter)
 		{
 			ExpressionTree* exprTree;
 			getExpressionTreeFromDeclaration(tree, &exprTree);
+			optimizeExpressionTree(&exprTree);
 			generateCodeForExpression(exprTree, file_out, false);
 			delete exprTree;
 		}
@@ -699,6 +1076,7 @@ void generateCodeForTree(ParsingTree* tree, FILE* file_out, int* labelCounter)
 	{
 		ExpressionTree* exprTree;
 		getExpressionTree(tree, &exprTree);
+		optimizeExpressionTree(&exprTree);
 		generateCodeForExpression(exprTree, file_out, false);
 		delete exprTree;
 		return;
@@ -710,6 +1088,7 @@ void generateCodeForTree(ParsingTree* tree, FILE* file_out, int* labelCounter)
 		fprintf_s(file_out, "while%d:\n", label);
 		ExpressionTree* exprTree;
 		getExpressionTree(tree->leaves->at(2), &exprTree);
+		optimizeExpressionTree(&exprTree);
 		generateCodeForExpression(exprTree, file_out, true);
 		delete exprTree;
 		fprintf_s(file_out, "pop eax\ncmp eax, 0\njz while_end%d\n", label);
@@ -728,6 +1107,7 @@ void generateCodeForTree(ParsingTree* tree, FILE* file_out, int* labelCounter)
 		generateCodeForTree(tree->leaves->at(2), file_out, labelCounter);
 		ExpressionTree* exprTree;
 		getExpressionTree(tree->leaves->at(6), &exprTree);
+		optimizeExpressionTree(&exprTree);
 		generateCodeForExpression(exprTree, file_out, true);
 		delete exprTree;
 		fprintf_s(file_out, "pop eax\ncmp eax, 0\njnz dowhile%d\n", label);

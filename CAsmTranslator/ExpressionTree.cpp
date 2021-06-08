@@ -7,6 +7,14 @@ ExpressionTree::ExpressionTree(Token* token)
 	right = nullptr;
 }
 
+ExpressionTree::~ExpressionTree()
+{
+	if (left != nullptr)
+		delete left;
+	if (right != nullptr)
+		delete right;
+}
+
 std::vector<Token*>* ExpressionTree::getInfix()
 {
 	std::vector<Token*>* data = new std::vector<Token*>();
