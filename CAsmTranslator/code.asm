@@ -6,7 +6,7 @@ a dword ?
 main proc
 
 while0:
-push 1
+push 0
 pop eax
 cmp eax, 0
 jz while_end0

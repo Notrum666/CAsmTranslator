@@ -713,29 +713,6 @@ void optimizeExpressionTree(ExpressionTree** tree)
 			(*tree)->right = nullptr;
 			break;
 		}
-		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
-		{
-			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
-			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
-			int value;
-			if (left == right)
-				value = 1;
-			else
-				value = 0;
-			int id = Translator::constants->getIdByValue(&value);
-			if (id == -1)
-			{
-				int* valueContainer = (int*)std::calloc(1, sizeof(int));
-				(*valueContainer) = value;
-				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
-			}
-			(*tree)->token = new Token(TABLE_CONSTANTS, id);
-			delete t->left;
-			delete t->right;
-			(*tree)->left = nullptr;
-			(*tree)->right = nullptr;
-			break;
-		}
 		break;
 	case 9: // +=
 		if (t->right->token->table_id == TABLE_CONSTANTS && *((int*)Translator::constants->get(t->right->token->record_id)->value) == 0)
@@ -860,29 +837,6 @@ void optimizeExpressionTree(ExpressionTree** tree)
 			int id = Translator::constants->getIdByValue(&value);
 			if (id == -1)
 				id = Translator::constants->add(new Record_Constants((int*)std::calloc(1, sizeof(int)), ValueType::INT32));
-			(*tree)->token = new Token(TABLE_CONSTANTS, id);
-			delete t->left;
-			delete t->right;
-			(*tree)->left = nullptr;
-			(*tree)->right = nullptr;
-			break;
-		}
-		if (t->left->token->table_id == TABLE_CONSTANTS && t->right->token->table_id == TABLE_CONSTANTS)
-		{
-			int left = *((int*)Translator::constants->get(t->left->token->record_id)->value);
-			int right = *((int*)Translator::constants->get(t->right->token->record_id)->value);
-			int value;
-			if (left != right)
-				value = 1;
-			else
-				value = 0;
-			int id = Translator::constants->getIdByValue(&value);
-			if (id == -1)
-			{
-				int* valueContainer = (int*)std::calloc(1, sizeof(int));
-				(*valueContainer) = value;
-				id = Translator::constants->add(new Record_Constants(valueContainer, ValueType::INT32));
-			}
 			(*tree)->token = new Token(TABLE_CONSTANTS, id);
 			delete t->left;
 			delete t->right;
