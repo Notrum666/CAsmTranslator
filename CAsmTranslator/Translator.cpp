@@ -189,8 +189,8 @@ void Translator::Init()
 
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 3), new Token(TABLE_DELIMETERS, 7), new Token(TABLE_DELIMETERS, 8) }, 0, false, false, true, true)); // 78: Empty
 
-	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_KEYWORDS, 3), new Token(TABLE_KEYWORDS, 4), new Token(TABLE_KEYWORDS, 5),
-																   new Token(TABLE_KEYWORDS, 6), new Token(TABLE_KEYWORDS, 7) }, 96, false, true, false, true)); // 79: NAOperation
+	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_KEYWORDS, 4), new Token(TABLE_KEYWORDS, 5), new Token(TABLE_KEYWORDS, 6), new Token(TABLE_KEYWORDS, 7),
+																   new Token(TABLE_KEYWORDS, 8), new Token(TABLE_KEYWORDS, 11), new Token(TABLE_KEYWORDS, 12), new Token(TABLE_KEYWORDS, 13) }, 96, false, true, false, true)); // 79: NAOperation
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_IDENTIFIERS, -1), new Token(TABLE_CONSTANTS, -1), new Token(TABLE_DELIMETERS, 6) }, 27, false, false, false, true)); // 80: Expression
 
 	parsingTable->add(new ParsingTable_Record(std::vector<Token*>{ new Token(TABLE_DELIMETERS, 7), new Token(TABLE_DELIMETERS, 3), new Token(TABLE_DELIMETERS, 8) }, 0, false, false, true, true)); // 81: Empty
