@@ -1,8 +1,5 @@
 int main()
 {
-	int a;
-	while (7 - 5 == 2)
-	{
-
-	}
+	int a = 5;
+	a = a;
 }

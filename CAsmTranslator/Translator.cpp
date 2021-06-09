@@ -468,31 +468,61 @@ Error* getExpressionTree(ParsingTree* tree, ExpressionTree** out_expressionTree)
 			tree->left = expressionStack.top();
 			expressionStack.pop();
 			expressionStack.push(tree);
-			if (iter->record_id == 3 || iter->record_id == 9 || iter->record_id == 10)
-			{
-				if (tree->left->token->table_id != TABLE_IDENTIFIERS)
-					return new Error("", 0, 0, "Expression must be modifiable.");
-				if (iter->record_id == 3)
-					Translator::identifiers->get(tree->left->token->record_id)->initialized = true;
-			}
+			//if (iter->record_id == 3 || iter->record_id == 9 || iter->record_id == 10)
+			//{
+			//	if (tree->left->token->table_id != TABLE_IDENTIFIERS)
+			//		return new Error("", 0, 0, "Expression must be modifiable.");
+			//	if (iter->record_id == 3)
+			//		Translator::identifiers->get(tree->left->token->record_id)->initialized = true;
+			//}
 
-			char* message = (char*)calloc(MESSAGE_LEN, sizeof(char));
-			if (tree->right->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->right->token->record_id)->initialized)
-			{
-				sprintf_s(message, MESSAGE_LEN, "%s: variable is not initialized.\0", Translator::identifiers->get(tree->right->token->record_id)->name);
-				return new Error("", 0, 0, message);
-			}
-			if (tree->left->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->left->token->record_id)->initialized)
-			{
-				sprintf_s(message, MESSAGE_LEN, "%s : variable is not initialized.\0", Translator::identifiers->get(tree->left->token->record_id)->name);
-				return new Error("", 0, 0, message);
-			}
+			//char* message = (char*)calloc(MESSAGE_LEN, sizeof(char));
+			//if (tree->right->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->right->token->record_id)->initialized)
+			//{
+			//	sprintf_s(message, MESSAGE_LEN, "%s: variable is not initialized.\0", Translator::identifiers->get(tree->right->token->record_id)->name);
+			//	return new Error("", 0, 0, message);
+			//}
+			//if (tree->left->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->left->token->record_id)->initialized)
+			//{
+			//	sprintf_s(message, MESSAGE_LEN, "%s : variable is not initialized.\0", Translator::identifiers->get(tree->left->token->record_id)->name);
+			//	return new Error("", 0, 0, message);
+			//}
 		}
 		else
 			expressionStack.push(new ExpressionTree(iter));
 	}
 	*out_expressionTree = expressionStack.top();
 	expressionStack.pop();
+	return nullptr;
+}
+
+Error* checkExpressionLogicErrors(ExpressionTree* tree)
+{
+	if (tree->token->table_id == TABLE_IDENTIFIERS && !Translator::identifiers->get(tree->token->record_id)->initialized)
+	{
+		char* message = (char*)calloc(MESSAGE_LEN, sizeof(char));
+		sprintf_s(message, MESSAGE_LEN, "%s: variable is not initialized.\0", Translator::identifiers->get(tree->token->record_id)->name);
+		return new Error("", 0, 0, message);
+	}
+	if (tree->token->table_id == TABLE_KEYWORDS)
+	{
+		Error* err = checkExpressionLogicErrors(tree->right);
+		if (err != nullptr)
+			return err;
+
+		if (tree->token->record_id == 3 || tree->token->record_id == 9 || tree->token->record_id == 10)
+		{
+			if (tree->left->token->table_id != TABLE_IDENTIFIERS)
+				return new Error("", 0, 0, "Expression must be modifiable.");
+			Translator::identifiers->get(tree->left->token->record_id)->initialized = true;
+		}
+		else
+		{
+			err = checkExpressionLogicErrors(tree->left);
+			if (err != nullptr)
+				return err;
+		}
+	}
 	return nullptr;
 }
 
@@ -866,6 +896,9 @@ Error* checkLogicErrors(ParsingTree* tree)
 			Error* error = getExpressionTreeFromDeclaration(tree, &exprTree);
 			if (error != nullptr)
 				return error;
+			error = checkExpressionLogicErrors(exprTree);
+			if (error != nullptr)
+				return error;
 			delete exprTree;
 
 			record->initialized = true;
@@ -878,6 +911,9 @@ Error* checkLogicErrors(ParsingTree* tree)
 	{
 		ExpressionTree* exprTree;
 		Error* error = getExpressionTree(tree, &exprTree);
+		if (error != nullptr)
+			return error;
+		error = checkExpressionLogicErrors(exprTree);
 		if (error != nullptr)
 			return error;
 		delete exprTree;

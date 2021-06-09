@@ -10,7 +10,8 @@ int main()
 		printf_s("%s (%d,%d): message : %s\n", err->file, err->row, err->column, err->message);
 		scanf_s("%*c");
 	}
-	//else printf_s("done\n");
+	else 
+		printf_s("done\n");
 	//Translator::keywords->print();
 	//printf_s("\n");
 	//Translator::delimeters->print();
